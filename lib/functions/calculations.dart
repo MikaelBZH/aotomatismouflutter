@@ -1,6 +1,8 @@
 import 'utils.dart';
 import 'dart:math';
 
+bool choice = true;
+
 enum CalculationType {
   sum,
   subtract,

@@ -57,30 +57,32 @@ class _ExercisesPageState extends State<ExercisesPage> {
             // --------------------------------------------------
             // CASES A COCHER
             // --------------------------------------------------
-            ...CalculationType.values.map((type) {
-              return CheckboxListTile(
-                title: Text(switch (type) {
-                  CalculationType.sum => 'Sammañ',
-                  CalculationType.subtract => 'Lemel',
-                  CalculationType.multiply => 'Liesaat',
-                  CalculationType.divide => 'Rannañ',
-                }),
-                value: selectedTypes.contains(type),
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-                onChanged: (isChecked) {
-                  setState(() {
-                    if (isChecked == true) {
-                      selectedTypes.add(type);
-                    } else {
-                      selectedTypes.remove(type);
-                    }
-                    numbers = randomCalculation(selectedTypes);
-                    displayAnswer = false;
-                  });
-                },
-              );
-            }),
+            if (choice) (
+              ...CalculationType.values.map((type) {
+                return CheckboxListTile(
+                  title: Text(switch (type) {
+                    CalculationType.sum => 'Sammañ',
+                    CalculationType.subtract => 'Lemel',
+                    CalculationType.multiply => 'Liesaat',
+                    CalculationType.divide => 'Rannañ',
+                  }),
+                  value: selectedTypes.contains(type),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (isChecked) {
+                    setState(() {
+                      if (isChecked == true) {
+                        selectedTypes.add(type);
+                      } else {
+                        selectedTypes.remove(type);
+                      }
+                      numbers = randomCalculation(selectedTypes);
+                      displayAnswer = false;
+                    });
+                  },
+                );
+              }),
+            )
 
             // --------------------------------------------------
             // PREMIÈRE ZONE DE TEXTE
