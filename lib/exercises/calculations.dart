@@ -1,4 +1,4 @@
-import 'utils.dart';
+import '../functions/utils.dart';
 import 'dart:math';
 
 bool choice = true;

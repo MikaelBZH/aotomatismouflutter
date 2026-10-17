@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/menu.dart';
-import '../functions/calculations.dart';
+import '../exercises/calculations.dart';
 
 class ExercisesPage extends StatefulWidget {
   const ExercisesPage({super.key});
@@ -57,7 +57,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             // --------------------------------------------------
             // CASES A COCHER
             // --------------------------------------------------
-            if (choice) (
+            if (choice)
               ...CalculationType.values.map((type) {
                 return CheckboxListTile(
                   title: Text(switch (type) {
@@ -82,7 +82,6 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   },
                 );
               }),
-            )
 
             // --------------------------------------------------
             // PREMIÈRE ZONE DE TEXTE
