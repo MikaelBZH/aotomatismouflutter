@@ -1,20 +1,20 @@
-class Exercises {
+class Exercise {
   final String question;
   final String answer;
   final String? help;
 
-  const Exercises ({
+  const Exercise ({
     required this.question,
     required this.answer,
-    required this.help,
+    this.help,
 });
 }
 
-class ExercisesOptions {
+class ExerciseOptions {
   final String id;
   final String label;
 
-  const ExercisesOptions ({
+  const ExerciseOptions ({
     required this.id,
     required this.label,
   });
