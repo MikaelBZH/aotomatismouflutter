@@ -24,19 +24,15 @@ class _ExercisesPageState extends State<ExercisesPage> {
 
   bool displayAnswer = false; // Permet de savoir si la deuxième zone de texte doit être affichée.
 
-  final Set<CalculationType> selectedTypes = {
-    CalculationType.sum,
-    CalculationType.subtract,
-    CalculationType.multiply,
-    CalculationType.divide,
-  };
-
-  CalculationExercise? numbers;
+  late final Set<String> selectedOptions;
+  Exercise? exercise;
 
   @override
   void initState() {
     super.initState();
-    numbers = randomCalculation(selectedTypes)! ; // ! garantira que numbers ne sera jamais null
+
+    selectedOptions = widget.options.map((option) => option.id).toSet();
+    exercise = widget.generateExercise(selectedOptions);
   }
 
   @override
@@ -68,26 +64,18 @@ class _ExercisesPageState extends State<ExercisesPage> {
             // --------------------------------------------------
             // CASES A COCHER
             // --------------------------------------------------
-            if (choice)
-              ...CalculationType.values.map((type) {
-                return CheckboxListTile(
-                  title: Text(switch (type) {
-                    CalculationType.sum => 'Sammañ',
-                    CalculationType.subtract => 'Lemel',
-                    CalculationType.multiply => 'Liesaat',
-                    CalculationType.divide => 'Rannañ',
-                  }),
-                  value: selectedTypes.contains(type),
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  onChanged: (isChecked) {
+              ...widget.options.map((option) {
+                return SwitchListTile(
+                  title: Text(option.label),
+                  value: selectedOptions.contains(option.id),
+                  onChanged: (isSelected) {
                     setState(() {
-                      if (isChecked == true) {
-                        selectedTypes.add(type);
+                      if (isSelected) {
+                        selectedOptions.add(option.id);
                       } else {
-                        selectedTypes.remove(type);
+                        selectedOptions.remove(option.id);
                       }
-                      numbers = randomCalculation(selectedTypes);
+                      exercise = widget.generateExercise(selectedOptions);
                       displayAnswer = false;
                     });
                   },
@@ -125,10 +113,10 @@ class _ExercisesPageState extends State<ExercisesPage> {
               ),
 
               child: Text(
-                // numbers?.question : question générée si numbers != null
+                // exercise?.question : question générée si numbers != null
                 // ?? Si numbers est null, alors question générée
-                numbers?.question ?? 'Dibab un oberiadenn d\'an nebeutañ',
-                style: numbers == null
+                exercise?.question ?? 'Dibab un oberiadenn d\'an nebeutañ',
+                style: exercise == null
                   ? Theme.of(context).textTheme.bodyMedium
                   : Theme.of(context).textTheme.titleLarge,
               ),
@@ -163,7 +151,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        numbers = randomCalculation(selectedTypes);
+                        exercise = widget.generateExercise(selectedOptions);
                         displayAnswer = false;
                       });
                     },
@@ -178,7 +166,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             // --------------------------------------------------
             // DEUXIÈME ZONE DE TEXTE
             // --------------------------------------------------
-            if (displayAnswer && numbers != null)
+            if (displayAnswer && exercise != null)
               Container(
                 width: double.infinity,
                 height: 200,
@@ -206,7 +194,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  '${numbers!.answer}',
+                  '${exercise!.answer}',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
