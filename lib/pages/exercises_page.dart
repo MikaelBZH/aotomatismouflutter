@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import '../widgets/menu.dart';
-import '../exercises/calculations.dart';
+import '../models/exercises.dart';
+
+typedef ExerciseGenerator = Exercise? Function(Set<String> selectedOptions);
 
 class ExercisesPage extends StatefulWidget {
-  const ExercisesPage({super.key});
+  final String title;
+  final List<ExerciseOptions> options;
+  final ExerciseGenerator generateExercise;
+
+  const ExercisesPage({
+    super.key,
+    required this.title,
+    required this.options,
+    required this.generateExercise,
+  });
 
   @override
   State<ExercisesPage> createState() => _ExercisesPageState();
