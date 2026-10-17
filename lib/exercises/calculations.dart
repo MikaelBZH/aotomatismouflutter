@@ -1,21 +1,17 @@
 import '../functions/utils.dart';
+import '../models/exercises.dart';
 import 'dart:math';
 
 bool choice = true;
 
-enum CalculationType {
-  sum,
-  subtract,
-  multiply,
-  divide,
-}
+const calculationOptions = <ExerciseOptions>[
+  ExerciseOptions(id: 'sum', label: 'Sammañ'),
+  ExerciseOptions(id: 'subtract', label: 'Lemel'),
+  ExerciseOptions(id: 'multiply', label: 'Liesaat'),
+  ExerciseOptions(id: 'divide', label: 'Rannañ'),
+];
 
-abstract class CalculationExercise {
-  String get question;
-  int get answer;
-}
-
-class SumNumbers implements CalculationExercise {
+class SumNumbers implements Exercise {
   final int nb1;
   final int nb2;
 
@@ -30,10 +26,13 @@ class SumNumbers implements CalculationExercise {
   String get question => '$nb1 + ${nb2 < 0 ? '($nb2)' : nb2}';
 
   @override
-  int get answer => nb1 + nb2;
+  String get answer => (nb1 + nb2).toString();
+
+  @override
+  String? get help => null;
 }
 
-class SubtractNumbers implements CalculationExercise {
+class SubtractNumbers implements Exercise {
   final int nb1;
   final int nb2;
 
@@ -49,10 +48,13 @@ class SubtractNumbers implements CalculationExercise {
   String get question => '$nb1 - ${nb2 < 0 ? '($nb2)' : nb2}';
 
   @override
-  int get answer => nb1 - nb2;
+  String get answer => (nb1 - nb2).toString();
+
+  @override
+  String? get help => null;
 }
 
-class MultiplyNumbers implements CalculationExercise {
+class MultiplyNumbers implements Exercise {
   final int nb1;
   final int nb2;
 
@@ -68,10 +70,13 @@ class MultiplyNumbers implements CalculationExercise {
   String get question => '$nb1 x ${nb2 < 0 ? '($nb2)' : nb2}';
 
   @override
-  int get answer => nb1 * nb2;
+  String get answer => (nb1 * nb2).toString();
+
+  @override
+  String? get help => null;
 }
 
-class DivideNumbers implements CalculationExercise {
+class DivideNumbers implements Exercise {
   final int nb1;
   final int nb2;
 
@@ -79,10 +84,7 @@ class DivideNumbers implements CalculationExercise {
 
   factory DivideNumbers.random() {
     final n1 = randomFromInterval(-12, 12);
-    var n2 = randomFromInterval(-12, 12);
-    while (n2 == 0) {
-      n2 = randomFromInterval(-12, 12);
-    }
+    final n2 = randomFromInterval(-12, 12);
     return DivideNumbers(n1, n2);
   }
 
@@ -92,34 +94,32 @@ class DivideNumbers implements CalculationExercise {
   String get question => '$nb3 ÷ ${nb2 < 0 ? '($nb2)' : nb2}';
 
   @override
-  int get answer => nb1;
+  String get answer => nb1 == 0 ? 'Dibosupl' : '$nb1';
+
+  @override
+  String? get help => null;
 
 }
 
 /*------------------------------------------------------------------------------
-Fonction randomCalculation de type CalculationExercice qui prend en paramètre un
-ensemble (Set) de type CalculationType et retourne un exercise aléatoire.
-le ? signifie qu'un null peut être retourné.
- */
+Fonction randomCalculation de type Exercise qui prend en paramètre un
+ensemble (Set) de type CalculationOptions et retourne un exercise aléatoire.
+----------------------------------------------------------------------------- */
 
-CalculationExercise? randomCalculation(
-  Set<CalculationType> selectedTypes,
-) {
-    if (selectedTypes.isEmpty) {
+Exercise? randomCalculation(Set<String> selectedOptions) {
+
+    if (selectedOptions.isEmpty) {
       return null;
     }
 
-  final types = selectedTypes.toList();
-  final chosenType = types[Random().nextInt(types.length)];
+  final options= selectedOptions.toList();
+  final chosen = options[Random().nextInt(options.length)];
 
-  switch (chosenType) {
-    case CalculationType.sum:
-      return SumNumbers.random();
-    case CalculationType.subtract:
-      return SubtractNumbers.random();
-    case CalculationType.multiply:
-      return MultiplyNumbers.random();
-    case CalculationType.divide:
-      return DivideNumbers.random();
-  }
-  }
+  return switch (chosen) {
+    'sum' =>  SumNumbers.random(),
+    'subtract' =>  SubtractNumbers.random(),
+    'multiply' =>  MultiplyNumbers.random(),
+    'divide' =>  DivideNumbers.random(),
+    _ => throw ArgumentError('Unknown option: $chosen'),
+  };
+}
