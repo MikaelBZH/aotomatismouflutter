@@ -43,7 +43,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
       // --------------------------------------------------
       appBar: AppBar(
         title: Text(
-          'Aotomatismoù',
+          'Aotomatismoù\n${widget.title}',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         backgroundColor: Colors.orange[700],
@@ -194,7 +194,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  '${exercise!.answer}',
+                  exercise!.answer,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
