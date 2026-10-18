@@ -4,16 +4,14 @@ import '../models/exercises.dart';
 
 typedef ExerciseGenerator = Exercise? Function(Set<String> selectedOptions);
 
+
+
 class ExercisesPage extends StatefulWidget {
-  final String title;
-  final List<ExerciseOptions> options;
-  final ExerciseGenerator generateExercise;
+  final ExerciseModule module;
 
   const ExercisesPage({
     super.key,
-    required this.title,
-    required this.options,
-    required this.generateExercise,
+    required this.module,
   });
 
   @override
@@ -31,8 +29,8 @@ class _ExercisesPageState extends State<ExercisesPage> {
   void initState() {
     super.initState();
 
-    selectedOptions = widget.options.map((option) => option.id).toSet();
-    exercise = widget.generateExercise(selectedOptions);
+    selectedOptions = widget.module.options.map((option) => option.id).toSet();
+    exercise = widget.module.generateExercise(selectedOptions);
   }
 
   @override
@@ -43,7 +41,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
       // --------------------------------------------------
       appBar: AppBar(
         title: Text(
-          'Aotomatismoù\n${widget.title}',
+          'Aotomatismoù\n${widget.module.title}',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         backgroundColor: Colors.orange[700],
@@ -64,7 +62,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             // --------------------------------------------------
             // CASES A COCHER
             // --------------------------------------------------
-              ...widget.options.map((option) {
+              ...widget.module.options.map((option) {
                 return SwitchListTile(
                   title: Text(option.label),
                   value: selectedOptions.contains(option.id),
@@ -75,7 +73,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                       } else {
                         selectedOptions.remove(option.id);
                       }
-                      exercise = widget.generateExercise(selectedOptions);
+                      exercise = widget.module.generateExercise(selectedOptions);
                       displayAnswer = false;
                     });
                   },
@@ -151,7 +149,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        exercise = widget.generateExercise(selectedOptions);
+                        exercise = widget.module.generateExercise(selectedOptions);
                         displayAnswer = false;
                       });
                     },
