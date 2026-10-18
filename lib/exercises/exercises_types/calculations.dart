@@ -1,5 +1,5 @@
-import '../functions/utils.dart';
-import '../models/exercises.dart';
+import '../../functions/utils.dart';
+import '../../models/exercises.dart';
 import 'dart:math';
 
 bool choice = true;

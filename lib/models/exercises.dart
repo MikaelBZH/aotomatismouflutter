@@ -19,3 +19,19 @@ class ExerciseOptions {
     required this.label,
   });
 }
+
+typedef ExerciseGenerator = Exercise? Function(Set<String> selectedOptions);
+
+class ExerciseModule {
+  final String id;
+  final String title;
+  final List<ExerciseOptions> options;
+  final ExerciseGenerator generateExercise;
+
+  const ExerciseModule ({
+    required this.id,
+    required this.title,
+    required this.options,
+    required this.generateExercise,
+  });
+}
