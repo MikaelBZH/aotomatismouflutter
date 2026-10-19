@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import '../widgets/menu.dart';
 import '../models/exercises.dart';
 
-typedef ExerciseGenerator = Exercise? Function(Set<String> selectedOptions);
-
-
-
 class ExercisesPage extends StatefulWidget {
   final ExerciseModule module;
 

@@ -56,33 +56,24 @@ class Menu extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-            children: [
-              ListTile(
+            children: exerciseCatalog.map((module) {
+              return ListTile(
                 leading: const Icon(Icons.arrow_forward_ios),
-                title: const Text(
-                    'Jedadennoù',
-                    style: TextStyle(
-                      fontSize: 16,
-                    )
+                title: Text(
+                  module.title,
+                  style: TextStyle(fontSize: 14)
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ExercisesPage()),
-                  );
-                },
-              ),
-              const ListTile(
-                leading: Icon(Icons.arrow_forward_ios),
-                title: Text(
-                    'Kevrennoù',
-                    style: TextStyle(
-                      fontSize: 16,
-                    )
-                ),
-              ),
-            ],
+                    MaterialPageRoute(
+                      builder: (context) => ExercisesPage(module: module),
+                    ),
+                  ); // push
+                }, // onTap
+              );
+            }).toList(), // children
           ),
 
           // Menu Spas ha mentoniezh
