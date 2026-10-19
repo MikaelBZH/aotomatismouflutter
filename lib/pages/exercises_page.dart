@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tex/flutter_tex.dart';
 import '../widgets/menu.dart';
 import '../models/exercises.dart';
 
@@ -51,7 +52,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             ),
           ],
         ),
-        backgroundColor: Colors.orange[700],
+        backgroundColor: Colors.orange[500],
         centerTitle: true,
       ),
 
@@ -107,7 +108,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             ),
 
             // --------------------------------------------------
-            // PREMIÈRE ZONE DE TEXTE
+            // QUESTION ZONE
             // --------------------------------------------------
             Container(
               width: double.infinity, // toute la largeur disponible
@@ -136,20 +137,15 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 borderRadius: BorderRadius.circular(16),
               ),
 
-              child: Text(
-                // exercise?.question : question générée si numbers != null
-                // ?? Si numbers est null, alors question générée
-                exercise?.question ?? 'Dibab un oberiadenn d\'an nebeutañ',
-                style: exercise == null
-                  ? Theme.of(context).textTheme.bodyMedium
-                  : Theme.of(context).textTheme.titleLarge,
-              ),
+              child: exercise == null
+                ? Text("Dibab un oberiadenn d'an nebeutañ")
+                : Math2SVG(math: exercise!.question),
             ),
 
             const SizedBox(height: 16), // Espace vertical
 
             // --------------------------------------------------
-            // LES DEUX BOUTONS
+            // THE BUTTONS
             // --------------------------------------------------
             Row(
               children: [
@@ -188,7 +184,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             const SizedBox(height: 16),
 
             // --------------------------------------------------
-            // DEUXIÈME ZONE DE TEXTE
+            // ANSWER ZONE
             // --------------------------------------------------
             if (displayAnswer && exercise != null)
               Container(
@@ -217,10 +213,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Text(
-                  exercise!.answer,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                child: Math2SVG(math: exercise!.answer),
               ),
           ], // Ending children in Column
         ),
