@@ -67,7 +67,7 @@ class MultiplyNumbers implements Exercise {
   }
 
   @override
-  String get question => '$nb1 x ${nb2 < 0 ? '($nb2)' : nb2}';
+  String get question => '$nb1 \\times ${nb2 < 0 ? '($nb2)' : nb2}';
 
   @override
   String get answer => (nb1 * nb2).toString();
@@ -91,10 +91,10 @@ class DivideNumbers implements Exercise {
   late int nb3 = nb1 * nb2;
 
   @override
-  String get question => '$nb3 ÷ ${nb2 < 0 ? '($nb2)' : nb2}';
+  String get question => '$nb3 \\div ${nb2 < 0 ? '($nb2)' : nb2}';
 
   @override
-  String get answer => nb1 == 0 ? 'Dibosupl' : '$nb1';
+  String get answer => nb2 == 0 ? 'Dibosupl' : '$nb1';
 
   @override
   String? get help => null;

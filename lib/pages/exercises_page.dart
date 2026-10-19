@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tex/flutter_tex.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
 import '../widgets/menu.dart';
 import '../models/exercises.dart';
 
@@ -139,7 +139,13 @@ class _ExercisesPageState extends State<ExercisesPage> {
 
               child: exercise == null
                 ? Text("Dibab un oberiadenn d'an nebeutañ")
-                : Math2SVG(math: exercise!.question),
+                : Math.tex(
+                  exercise!.question,
+                  textStyle: const TextStyle(
+                    fontSize: 24,
+                    fontFamily: 'Andika',
+                  ),
+              )
             ),
 
             const SizedBox(height: 16), // Espace vertical
@@ -213,7 +219,8 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Math2SVG(math: exercise!.answer),
+                child: Math.tex(exercise!.answer,
+                  textStyle: Theme.of(context).textTheme.bodyLarge,),
               ),
           ], // Ending children in Column
         ),
