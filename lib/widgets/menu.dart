@@ -48,65 +48,32 @@ class Menu extends StatelessWidget {
 
           const Divider(),
 
-          // Menu Niveroù ha Jedadennoù
-          ExpansionTile(
-            leading: const Icon(Icons.calculate),
-            title: const Text('Niveroù ha Jedadennoù',
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            children: exerciseCatalog.map((module) {
-              return ListTile(
-                leading: const Icon(Icons.arrow_forward_ios),
-                title: Text(
-                  module.title,
-                  style: TextStyle(fontSize: 14)
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ExercisesPage(module: module),
-                    ),
-                  ); // push
-                }, // onTap
-              );
-            }).toList(), // children
-          ),
-
-          // Menu Spas ha mentoniezh
-          const ExpansionTile(
-            leading: Icon(Icons.category),
-            title: Text('Spas ha Mentoniezh',
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            children: [
-              ListTile(
-                leading: Icon(Icons.arrow_forward_ios),
-                title: Text(
-                    'Liammadur Pitagoras',
-                    style: TextStyle(
-                      fontSize: 16,
-                    )
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.arrow_forward_ios),
-                title: Text(
-                    'Perzh Thales',
-                    style: TextStyle(
-                      fontSize: 16,
-                    )
-                ),
-              ),
-            ],
-          ),
-
-        ],
+          // Exercises Menu
+          ...exerciseCategories.map((category) {
+            final modules = exerciseCatalog
+              .where((module) => module.categoryId == category.id)
+              .toList();
+            return ExpansionTile(
+              leading: const Icon(Icons.category),
+              title: Text(category.title),
+              children: modules.map((module) {
+                return ListTile(
+                  leading: const Icon(Icons.book),
+                  title: Text(module.title),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ExercisesPage(module: module),
+                      ),
+                    ); // push
+                  }, //onTap
+                );
+              }).toList(),
+            );
+          }), // ...exerciseCategories.map
+        ], // children ListView
       ),
     );
   }

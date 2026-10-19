@@ -4,7 +4,7 @@ import 'exercises_types/calculations.dart';
 const exerciseCategories = <ExerciseCategory>[
   ExerciseCategory(
     id: 'Niv',
-    title: 'Jedadennoù gant niveroù anterin',
+    title: 'Niveroù ha jedadennoù',
   ),
   ExerciseCategory(
     id: 'Spas',
