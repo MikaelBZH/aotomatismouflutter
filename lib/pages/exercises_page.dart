@@ -36,9 +36,20 @@ class _ExercisesPageState extends State<ExercisesPage> {
       // APP BAR
       // --------------------------------------------------
       appBar: AppBar(
-        title: Text(
-          'Aotomatismoù\n${widget.module.title}',
-          style: Theme.of(context).textTheme.bodyMedium,
+        title: Column (
+          mainAxisSize: MainAxisSize.min,
+          children:[
+            Text(
+              'Aotomatismoù',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Text(
+              widget.module.title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
         ),
         backgroundColor: Colors.orange[700],
         centerTitle: true,
@@ -56,25 +67,44 @@ class _ExercisesPageState extends State<ExercisesPage> {
           children: [
 
             // --------------------------------------------------
-            // CASES A COCHER
+            // SWITCHLIST
             // --------------------------------------------------
-              ...widget.module.options.map((option) {
-                return SwitchListTile(
-                  title: Text(option.label),
-                  value: selectedOptions.contains(option.id),
-                  onChanged: (isSelected) {
-                    setState(() {
-                      if (isSelected) {
-                        selectedOptions.add(option.id);
-                      } else {
-                        selectedOptions.remove(option.id);
-                      }
-                      exercise = widget.module.generateExercise(selectedOptions);
-                      displayAnswer = false;
-                    });
-                  },
-                );
-              }),
+            ExpansionTile(
+              shape: const Border(),
+              collapsedShape: const Border(),
+              title: Text(
+                'Dibaboù posupl :',
+                style: TextStyle(fontSize: 16),
+              ),
+              children: [
+                ...widget.module.options.map((option) {
+                    return ListTile(
+                      dense: true,
+                     title: Text(
+                        option.label,
+                        style: TextStyle(fontSize: 14),
+                     ),
+                      trailing: Transform.scale(
+                        scale: 0.7,
+                        child: Switch(
+                          value: selectedOptions.contains(option.id),
+                          onChanged: (isSelected) {
+                            setState(() {
+                              if (isSelected) {
+                                selectedOptions.add(option.id);
+                              } else {
+                                selectedOptions.remove(option.id);
+                              }
+                              exercise = widget.module.generateExercise(selectedOptions);
+                              displayAnswer = false;
+                            }); // setState
+                          }, // onChanged
+                        ),
+                    ),
+                  );
+                }),
+              ],
+            ),
 
             // --------------------------------------------------
             // PREMIÈRE ZONE DE TEXTE

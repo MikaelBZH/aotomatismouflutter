@@ -33,9 +33,7 @@ class Menu extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text(
               'Degemer',
-              style: TextStyle(
-                fontSize: 16,
-              ),
+              style: TextStyle(fontSize: 16),
             ),
             onTap: () {
               Navigator.pop(context);
@@ -54,12 +52,22 @@ class Menu extends StatelessWidget {
               .where((module) => module.categoryId == category.id)
               .toList();
             return ExpansionTile(
+              shape: const Border(),
+              collapsedShape: const Border(),
               leading: const Icon(Icons.category),
-              title: Text(category.title),
+              title: Text(
+                  category.title,
+                  style: TextStyle(fontSize: 16),
+              ),
               children: modules.map((module) {
                 return ListTile(
+                  contentPadding: EdgeInsets.only(left: 32),
+                  horizontalTitleGap: 10,
                   leading: const Icon(Icons.book),
-                  title: Text(module.title),
+                  title: Text(
+                      module.title,
+                      style: TextStyle(fontSize: 14),
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
