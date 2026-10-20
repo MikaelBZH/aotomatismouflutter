@@ -293,7 +293,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   textStyle: const TextStyle(fontSize: 36),
                 ),
 
-                // ---------------------- HELP ------------------------------
+                // ---------------------- DETAILS ---------------------------
 
                 if (exercise?.details != null && displayAnswer)
                   Positioned(
@@ -353,7 +353,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                     ), // iconButton
                   ), // Positioned
 
-    // -------------------- HELP ENDED --------------------------
+                // --------------------- DETAILS ENDED --------------------------
 
               ),
           ], // Ending children in Column
