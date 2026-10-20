@@ -70,21 +70,22 @@ class _ExercisesPageState extends State<ExercisesPage> {
             // --------------------------------------------------
             // SWITCHLIST
             // --------------------------------------------------
-            ExpansionTile(
-              shape: const Border(),
-              collapsedShape: const Border(),
-              title: Text(
-                'Dibaboù posupl :',
-                style: TextStyle(fontSize: 16),
-              ),
-              children: [
-                ...widget.module.options.map((option) {
-                    return ListTile(
-                      dense: true,
-                     title: Text(
+            if (widget.module.options.isNotEmpty)
+              ExpansionTile(
+                shape: const Border(),
+                collapsedShape: const Border(),
+                title: Text(
+                  'Dibaboù posupl :',
+                  style: TextStyle(fontSize: 16),
+                ),
+                children: [
+                  ...widget.module.options.map((option) {
+                      return ListTile(
+                        dense: true,
+                      title: Text(
                         option.label,
                         style: TextStyle(fontSize: 14),
-                     ),
+                      ),
                       trailing: Transform.scale(
                         scale: 0.7,
                         child: Switch(
@@ -101,11 +102,11 @@ class _ExercisesPageState extends State<ExercisesPage> {
                             }); // setState
                           }, // onChanged
                         ),
-                    ),
-                  );
-                }),
-              ],
-            ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
 
             // --------------------------------------------------
             // QUESTION ZONE
@@ -137,15 +138,78 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 borderRadius: BorderRadius.circular(16),
               ),
 
-              child: exercise == null
-                ? Text("Dibab un oberiadenn d'an nebeutañ")
-                : Math.tex(
-                  exercise!.question,
-                  textStyle: const TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'Andika',
+              child: Stack(
+                children: [
+                  Center(
+                    child: exercise == null
+                      ? Text("Dibab un oberiadenn d'an nebeutañ")
+                      : Math.tex(
+                          exercise!.question,
+                          textStyle: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                      )
                   ),
-              )
+                  if (exercise?.help != null && !displayAnswer)
+                    Positioned(
+                      top: -10,
+                      right: -10,
+                      child: IconButton(
+                        icon: const Icon(Icons.help_outline),
+                        tooltip: 'Skoazell',
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (dialogContext) => Dialog(
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Container(
+                                    color: Colors.orange[500],
+                                    padding: const EdgeInsets.all(12),
+                                    child: const Text(
+                                      'Skoazell',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(24),
+                                    child: Text(
+                                      exercise!.help!,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 8, bottom: 8),
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange[500],
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        onPressed: () => Navigator.of(dialogContext).pop(),
+                                        child: const Text('Serriñ'),
+                                      )
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ); // showDialog
+                        }, // onPressed
+                      ),
+                    ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 16), // Espace vertical
@@ -220,7 +284,8 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Math.tex(exercise!.answer,
-                  textStyle: Theme.of(context).textTheme.bodyLarge,),
+                  textStyle: const TextStyle(fontSize: 36),
+                ),
               ),
           ], // Ending children in Column
         ),

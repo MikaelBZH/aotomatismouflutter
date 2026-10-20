@@ -94,10 +94,10 @@ class DivideNumbers implements Exercise {
   String get question => '$nb3 \\div ${nb2 < 0 ? '($nb2)' : nb2}';
 
   @override
-  String get answer => nb2 == 0 ? 'Dibosupl' : '$nb1';
+  String get answer => nb2 == 0 ? '\\text{Dibosupl}' : '$nb1';
 
   @override
-  String? get help => null;
+  String? get help => nb2 == 0 ? "Tu 'zo rannañ dre zero ?" : null;
 
 }
 

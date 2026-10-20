@@ -1,5 +1,6 @@
 import '../models/exercises.dart';
 import 'exercises_types/calculations.dart';
+import 'exercises_types/fractions.dart';
 
 const exerciseCategories = <ExerciseCategory>[
   ExerciseCategory(
@@ -27,6 +28,13 @@ final exerciseCatalog = <ExerciseModule>[
     categoryId: 'Niv',
     title: 'Jedadennoù gant niveroù anterin',
     options: calculationOptions,
+    generateExercise: randomCalculation,
+  ),
+  ExerciseModule(
+    id: 'fractions',
+    categoryId: 'Niv',
+    title: 'Jedadennoù gant kevrennoù',
+    options: fractionOptions,
     generateExercise: randomCalculation,
   ),
 ];
