@@ -2,11 +2,13 @@ class Exercise {
   final String question;
   final String answer;
   final String? help;
+  final String? details;
 
   const Exercise ({
     required this.question,
     required this.answer,
     this.help,
+    this.details,
 });
 }
 

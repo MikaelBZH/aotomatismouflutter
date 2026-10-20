@@ -33,10 +33,13 @@ class SumSubtractFractions implements Exercise {
   String get question => '\\frac{$d1}{$n1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$d2}{$n2}';
 
   @override
-  String get answer => '\\frac{${d1 * n2 + d2 * n1}{$commonDenominator}}';
+  String get answer => '\\frac{${d1 * n2 + d2 * n1}}{$commonDenominator}';
 
   @override
   String? get help => 'Evit sammañ pe lemel kevrennoù eo ret dezhe kaout un anver boutin.';
+
+  @override
+  String? get details => null;
 }
 
 class MultiplyFractions implements Exercise {
@@ -59,6 +62,9 @@ class MultiplyFractions implements Exercise {
 
   @override
   String? get help => null;
+
+  @override
+  String? get details => null;
 }
 
 class DivideFractions implements Exercise {
@@ -84,6 +90,8 @@ class DivideFractions implements Exercise {
   @override
   String? get help => nb2 == 0 ? "Tu 'zo rannañ dre zero ?" : null;
 
+  @override
+  String? get details => null;
 }
 
 /*------------------------------------------------------------------------------

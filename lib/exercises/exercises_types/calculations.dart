@@ -30,6 +30,9 @@ class SumNumbers implements Exercise {
 
   @override
   String? get help => null;
+
+  @override
+  String? get details => null;
 }
 
 class SubtractNumbers implements Exercise {
@@ -52,6 +55,9 @@ class SubtractNumbers implements Exercise {
 
   @override
   String? get help => null;
+
+  @override
+  String? get details => null;
 }
 
 class MultiplyNumbers implements Exercise {
@@ -74,6 +80,9 @@ class MultiplyNumbers implements Exercise {
 
   @override
   String? get help => null;
+
+  @override
+  String? get details => null;
 }
 
 class DivideNumbers implements Exercise {
@@ -98,6 +107,9 @@ class DivideNumbers implements Exercise {
 
   @override
   String? get help => nb2 == 0 ? "Tu 'zo rannañ dre zero ?" : null;
+
+  @override
+  String? get details => null;
 
 }
 

@@ -35,6 +35,6 @@ final exerciseCatalog = <ExerciseModule>[
     categoryId: 'Niv',
     title: 'Jedadennoù gant kevrennoù',
     options: fractionOptions,
-    generateExercise: randomCalculation,
+    generateExercise: randomFraction,
   ),
 ];

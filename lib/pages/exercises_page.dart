@@ -151,6 +151,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                           ),
                       )
                   ),
+
+                  // ---------------------- HELP ------------------------------
+
                   if (exercise?.help != null && !displayAnswer)
                     Positioned(
                       top: -10,
@@ -208,6 +211,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                         }, // onPressed
                       ),
                     ),
+
+                  // -------------------- HELP ENDED --------------------------
+
                 ],
               ),
             ),
@@ -215,7 +221,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
             const SizedBox(height: 16), // Espace vertical
 
             // --------------------------------------------------
-            // THE BUTTONS
+            // BUTTONS
             // --------------------------------------------------
             Row(
               children: [
@@ -286,6 +292,69 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 child: Math.tex(exercise!.answer,
                   textStyle: const TextStyle(fontSize: 36),
                 ),
+
+                // ---------------------- HELP ------------------------------
+
+                if (exercise?.details != null && displayAnswer)
+                  Positioned(
+                    top: -10,
+                    right: -10,
+                    child: IconButton(
+                      icon: const Icon(Icons.help_outline),
+                      tooltip: 'Difaziadenn',
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (dialogContext) => Dialog(
+                            clipBehavior: Clip.antiAlias,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  color: Colors.orange[500],
+                                  padding: const EdgeInsets.all(12),
+                                  child: const Text(
+                                    'Skoazell',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(24),
+                                  child: Text(
+                                    exercise!.details!,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8, bottom: 8),
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.orange[500],
+                                        foregroundColor: Colors.white,
+                                      ),
+                                      onPressed: () => Navigator.of(dialogContext).pop(),
+                                      child: const Text('Serriñ'),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ); // showDialog
+                      }, // onPressed
+                    ), // iconButton
+                  ), // Positioned
+
+    // -------------------- HELP ENDED --------------------------
+
               ),
           ], // Ending children in Column
         ),
