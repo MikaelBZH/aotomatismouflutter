@@ -315,7 +315,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                                   color: Colors.orange[500],
                                   padding: const EdgeInsets.all(12),
                                   child: const Text(
-                                    'Skoazell',
+                                    'Difaziadenn',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
