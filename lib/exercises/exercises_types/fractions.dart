@@ -10,6 +10,8 @@ const fractionOptions = <ExerciseOptions>[
   ExerciseOptions(id: 'divide', label: 'Rannañ'),
 ];
 
+// ---------------------- SUM AND SUBTRACT FRACTIONS ------------------------
+
 class SumSubtractFractions implements Exercise {
   final List<int> frac1;
   final List<int> frac2;
@@ -28,6 +30,8 @@ class SumSubtractFractions implements Exercise {
   late final d2 = frac2[0];
   late final n2 = frac2[1];
   late final commonDenominator = gcf(n1, n2);
+  late final fact1 = commonDenominator ~/ d1;
+  late final fact2 = commonDenominator ~/ d2;
 
   @override
   String get question => '\\frac{$d1}{$n1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$d2}{$n2}';
@@ -39,8 +43,14 @@ class SumSubtractFractions implements Exercise {
   String? get help => 'Evit sammañ pe lemel kevrennoù eo ret dezhe kaout un anver boutin.';
 
   @override
-  String? get details => null;
+  String? get details => r'''
+    \begin{aligned}
+    \frac{${fact1 != 1 ? 'd1 \\times fact1' : 'd1'}}{2}
+    \end{aligned}
+  ''';
 }
+
+// ---------------------- MULTIPLY FRACTIONS ------------------------
 
 class MultiplyFractions implements Exercise {
   final int nb1;
@@ -66,6 +76,8 @@ class MultiplyFractions implements Exercise {
   @override
   String? get details => null;
 }
+
+// ---------------------- DIVIDE FRACTIONS ------------------------
 
 class DivideFractions implements Exercise {
   final int nb1;

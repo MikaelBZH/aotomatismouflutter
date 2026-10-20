@@ -267,7 +267,6 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 width: double.infinity,
                 height: 200,
                 padding: const EdgeInsets.all(12),
-                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   border: Border(
                     left: const BorderSide(
@@ -289,74 +288,81 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Math.tex(exercise!.answer,
-                  textStyle: const TextStyle(fontSize: 36),
-                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Center(
+                      child: Math.tex(
+                        exercise!.answer,
+                        textStyle: const TextStyle(fontSize: 36),
+                      ),
+                    ),
 
-                // ---------------------- DETAILS ---------------------------
+                    // ---------------------- DETAILS ---------------------------
 
-                if (exercise?.details != null && displayAnswer)
-                  Positioned(
-                    top: -10,
-                    right: -10,
-                    child: IconButton(
-                      icon: const Icon(Icons.help_outline),
-                      tooltip: 'Difaziadenn',
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (dialogContext) => Dialog(
-                            clipBehavior: Clip.antiAlias,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Container(
-                                  color: Colors.orange[500],
-                                  padding: const EdgeInsets.all(12),
-                                  child: const Text(
-                                    'Difaziadenn',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(24),
-                                  child: Text(
-                                    exercise!.details!,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8, bottom: 8),
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orange[500],
-                                        foregroundColor: Colors.white,
+                    if (exercise?.details != null && displayAnswer)
+                      Positioned(
+                        top: -10,
+                        right: -10,
+                        child: IconButton(
+                          icon: const Icon(Icons.fact_check_outlined),
+                          tooltip: 'Difaziadenn',
+                          onPressed: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (dialogContext) => Dialog(
+                                clipBehavior: Clip.antiAlias,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Container(
+                                      color: Colors.green[500],
+                                      padding: const EdgeInsets.all(12),
+                                      child: const Text(
+                                        'Difaziadenn',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                        ),
                                       ),
-                                      onPressed: () => Navigator.of(dialogContext).pop(),
-                                      child: const Text('Serriñ'),
                                     ),
-                                  ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(24),
+                                      child: Math.tex(
+                                        exercise!.details!,
+                                        textStyle: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8, bottom: 8),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.orange[500],
+                                            foregroundColor: Colors.white,
+                                          ),
+                                          onPressed: () => Navigator.of(dialogContext).pop(),
+                                          child: const Text('Serriñ'),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ); // showDialog
-                      }, // onPressed
-                    ), // iconButton
-                  ), // Positioned
+                              ),
+                            ); // showDialog
+                          }, // onPressed
+                        ), // iconButton
+                      ), // Positioned
 
-                // --------------------- DETAILS ENDED --------------------------
-
-              ),
-          ], // Ending children in Column
+                    // --------------------- DETAILS ENDED --------------------------
+                    ],
+                  ),
+                ),
+              ], // Ending children in Column
         ),
       ),
     );
