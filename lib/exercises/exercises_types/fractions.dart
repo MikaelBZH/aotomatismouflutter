@@ -19,34 +19,43 @@ class SumSubtractFractions implements Exercise {
   SumSubtractFractions(this.frac1, this.frac2);
 
   factory SumSubtractFractions.random() {
-    final f1 = fraction(-12, 12);
-    final f2 = fraction(-12, 12);
+    final f1 = generateFraction(-12, 12);
+    final f2 = generateFraction(-12, 12);
     return SumSubtractFractions(f1, f2);
   }
 
   late final sumSubtract = randomFromInterval(0, 1);
-  late final d1 = frac1[0];
-  late final n1 = frac1[1];
-  late final d2 = frac2[0];
-  late final n2 = frac2[1];
-  late final commonDenominator = gcf(n1, n2);
+  late final n1 = frac1[0];
+  late final d1 = frac1[1];
+  late final n2 = frac2[0];
+  late final d2 = frac2[1];
+  late final commonDenominator = lcm(d1, d2);
   late final fact1 = commonDenominator ~/ d1;
   late final fact2 = commonDenominator ~/ d2;
+  late final calculatedNumerator = sumSubtract == 0
+      ? n1 * fact1 + n2 * fact2
+      : n1 * fact1 - n2 * fact2;
+  late final calculatedDenominator = d1 * fact1;
+  late final simplifiedFraction = simplifyFraction([calculatedNumerator, calculatedDenominator]);
+
 
   @override
-  String get question => '\\frac{$d1}{$n1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$d2}{$n2}';
+  String get question => '\\frac{$n1}{$d1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$n2}{$d2}';
 
   @override
-  String get answer => '\\frac{${d1 * n2 + d2 * n1}}{$commonDenominator}';
+  String get answer => '\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}}';
 
   @override
   String? get help => 'Evit sammañ pe lemel kevrennoù eo ret dezhe kaout un anver boutin.';
 
   @override
-  String? get details => r'''
-    \begin{aligned}
-    \frac{${fact1 != 1 ? 'd1 \\times fact1' : 'd1'}}{2}
-    \end{aligned}
+  String? get details => '''
+    \\begin{aligned}
+    ${d1 != d2
+      ?  '\\frac{$n1 \\times $fact1}{$d1 \\times $fact1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$n2 \\times $fact2}{$d2 \\times $fact2}'
+      : ''}
+      &=\\frac{1}{2}
+    \\end{aligned}
   ''';
 }
 

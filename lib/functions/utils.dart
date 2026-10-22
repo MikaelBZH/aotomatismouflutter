@@ -10,9 +10,9 @@ int randomFromInterval(int min, int max) {
   return min + Random().nextInt(max - min + 1);
 }
 
-// --------------------- Fractions ----------------------------
+// --------------------- Generate fraction ----------------------------
 
-List<int> fraction(int minNumerator, int maxDenominator) {
+List<int> generateFraction(int minNumerator, int maxDenominator) {
   int numerator = randomFromInterval(minNumerator, 12);
   while (numerator == 0) {
     numerator = randomFromInterval(minNumerator, 12);
@@ -40,8 +40,19 @@ int gcd(int a, int b) {
 
 }
 
-// --------------------- Greatest Common Factor  ----------------------------
+// --------------------- Least Common Multiple  ----------------------------
 
-int gcf(int a, int b) {
+int lcm(int a, int b) {
   return (a * b) ~/ gcd(a, b);
+}
+
+// ----------------------- Simplify fraction  ------------------------------
+
+List<int> simplifyFraction(List<int> fraction) {
+  int numerator = fraction[0];
+  int denominator = fraction[1];
+  int simplificationFactor = gcd(numerator, denominator);
+  numerator = numerator ~/ simplificationFactor;
+  denominator = denominator ~/ simplificationFactor;
+  return [numerator, denominator, simplificationFactor];
 }
