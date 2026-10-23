@@ -51,8 +51,12 @@ class SumSubtractFractions implements Exercise {
   @override
   String? get details => '''
     \\begin{aligned}
+    $question &
     ${d1 != d2
-      ?  '\\frac{$n1 \\times $fact1}{$d1 \\times $fact1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$n2 \\times $fact2}{$d2 \\times $fact2}'
+      ?  '=\\frac{$n1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}}{$d1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}} '
+      '${sumSubtract == 0 ? '+' : '-'}'
+      '\\frac{$n2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}}{$d2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}} \\\\'
+      '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator}'
       : ''}
       &=\\frac{1}{2}
     \\end{aligned}
