@@ -36,6 +36,7 @@ class SumSubtractFractions implements Exercise {
       ? n1 * fact1 + n2 * fact2
       : n1 * fact1 - n2 * fact2;
   late final calculatedDenominator = d1 * fact1;
+  late final factSimplified = gcd(calculatedNumerator, calculatedDenominator);
   late final simplifiedFraction = simplifyFraction([calculatedNumerator, calculatedDenominator]);
 
 
@@ -43,7 +44,9 @@ class SumSubtractFractions implements Exercise {
   String get question => '\\frac{$n1}{$d1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$n2}{$d2}';
 
   @override
-  String get answer => '\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}}';
+  String get answer => simplifiedFraction[0] < 0
+                          ? '- \\frac{${simplifiedFraction[0].abs()}}{${simplifiedFraction[1]}}'
+                          : '\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}}';
 
   @override
   String? get help => 'Evit sammañ pe lemel kevrennoù eo ret dezhe kaout un anver boutin.';
@@ -58,8 +61,18 @@ class SumSubtractFractions implements Exercise {
       '\\frac{$n2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}}{$d2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}} \\\\'
       '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator} \\\\'
       : ''}
-    &=\\frac{${n1 * fact1} ${sumSubtract == 0 ? '+' : '-'} ${n2 * fact2}}{$commonDenominator} \\\\
-    &=\\frac{${calculatedNumerator}}{$commonDenominator}
+    &=\\frac{${n1 * fact1} ${sumSubtract == 0 ? '+' : '-'} ${n2 * fact2 < 0 ? '(${n2 * fact2})' : n2 * fact2}}{$commonDenominator} \\\\
+    &=\\frac{$calculatedNumerator}{$commonDenominator} \\\\
+    
+    ${factSimplified != 1
+      ? '\\text{Simplaat :} \\\\'
+        '&=\\frac{$calculatedNumerator \\color{red}{\\div $factSimplified}}{$commonDenominator \\color{red}{\\div $factSimplified}} \\\\'
+        '&=\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}} \\\\'
+      : '\\\\'}
+    
+    &= $answer
+
+    
        
     \\end{aligned}
   ''';
