@@ -56,9 +56,11 @@ class SumSubtractFractions implements Exercise {
       ?  '=\\frac{$n1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}}{$d1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}} '
       '${sumSubtract == 0 ? '+' : '-'}'
       '\\frac{$n2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}}{$d2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}} \\\\'
-      '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator}'
+      '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator} \\\\'
       : ''}
-      &=\\frac{1}{2}
+    &=\\frac{${n1 * fact1} ${sumSubtract == 0 ? '+' : '-'} ${n2 * fact2}}{$commonDenominator} \\\\
+    &=\\frac{${calculatedNumerator}}{$commonDenominator}
+       
     \\end{aligned}
   ''';
 }
