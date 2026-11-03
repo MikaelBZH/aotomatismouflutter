@@ -70,7 +70,7 @@ class SumSubtractFractions implements Exercise {
         '&=\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}} \\\\'
       : '\\\\'}
     
-    &= $answer
+    ${factSimplified != 1 && calculatedNumerator < 0 ? '&= $answer' : ''}
 
     
        
