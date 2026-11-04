@@ -22,6 +22,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
   late final Set<String> selectedOptions;
   Exercise? exercise;
 
+  final controller = ExpansibleController();
+
+
   @override
   void initState() {
     super.initState();
@@ -68,15 +71,16 @@ class _ExercisesPageState extends State<ExercisesPage> {
           children: [
 
             // --------------------------------------------------
-            // SWITCHLIST
+            // SWITCHLIST ZONE DE CHOIX
             // --------------------------------------------------
             if (widget.module.options.isNotEmpty)
               ExpansionTile(
+                controller: controller,
                 shape: const Border(),
                 collapsedShape: const Border(),
                 title: Text(
                   'Dibaboù posupl :',
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 20),
                 ),
                 children: [
                   ...widget.module.options.map((option) {
@@ -84,7 +88,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                         dense: true,
                       title: Text(
                         option.label,
-                        style: TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: 16),
                       ),
                       trailing: Transform.scale(
                         scale: 0.7,
@@ -226,11 +230,14 @@ class _ExercisesPageState extends State<ExercisesPage> {
             Row(
               children: [
 
-                // Premier bouton
+                // First button
                 Expanded( // Prendre la place disponible
                   child: ElevatedButton(
                     onPressed: () {
-                      setState(() { // Changement de l'état de la page et reconstruction de l'interface
+                      setState(() {
+                        if (controller.isExpanded) {
+                          controller.collapse();
+                        } // Changement de l'état de la page et reconstruction de l'interface
                         displayAnswer = !displayAnswer;
                       });
                     },
@@ -240,9 +247,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                   ),
                 ),
 
-                const SizedBox(width: 12), // Espace horizontal entre les deux boutons
+                const SizedBox(width: 12), // Horizontal space between both buttons
 
-                // Deuxième bouton
+                // Second button
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
