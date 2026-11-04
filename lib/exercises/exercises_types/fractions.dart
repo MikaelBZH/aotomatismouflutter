@@ -44,8 +44,8 @@ class SumSubtractFractions implements Exercise {
   String get question => '\\frac{$n1}{$d1} ${sumSubtract == 0 ? '+' : '-'} \\frac{$n2}{$d2}';
 
   @override
-  String get answer => (calculatedNumerator % calculatedDenominator == 0)
-                          ? calculatedNumerator ~/ calculatedDenominator
+  String get answer => calculatedNumerator % calculatedDenominator == 0
+                          ? '${calculatedNumerator ~/ calculatedDenominator}'
                           : {simplifiedFraction[0] < 0
                               ? '- \\frac{${simplifiedFraction[0].abs()}}{${simplifiedFraction[1]}}'
                               : '\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}}';
