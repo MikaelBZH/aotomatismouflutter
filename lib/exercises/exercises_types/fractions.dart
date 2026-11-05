@@ -63,57 +63,74 @@ class SumSubtractFractions implements Exercise {
   String? get help => 'Evit sammañ pe lemel kevrennoù eo ret dezhe kaout un anver boutin.';
 
   @override
-  String? get details => '''
-    \\begin{aligned}
+  String? get details => '''\\begin{aligned}
+    
     $question &
     ${d1 != d2
-      ?  '=\\frac{$n1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}}{$d1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}} '
-      '${sumSubtract == 0 ? '+' : '-'}'
-      '\\frac{$n2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}}{$d2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}} \\\\'
-      '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator} \\\\'
+      ? '=\\frac{$n1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}}{$d1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}} '
+        '${sumSubtract == 0 ? '+' : '-'}'
+        '\\frac{$n2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}}{$d2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}} \\\\'
+        '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator} \\\\'
       : ''}
     &=\\frac{${n1 * fact1} ${sumSubtract == 0 ? '+' : '-'} ${n2 * fact2 < 0 ? '(${n2 * fact2})' : n2 * fact2}}{$commonDenominator} \\\\
     &=\\frac{$calculatedNumerator}{$commonDenominator} \\\\
     
-    ${factSimplified != 1
+    ${factSimplified != 1 && (calculatedNumerator % calculatedDenominator != 0)
       ? '\\text{Simplaat :} \\\\'
         '&=\\frac{$calculatedNumerator \\color{red}{\\div $factSimplified}}{$commonDenominator \\color{red}{\\div $factSimplified}} \\\\'
         '&=\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}} \\\\'
       : '\\\\'}
     
     ${factSimplified != 1 || calculatedNumerator < 0 ? '&= $answer' : ''}
-
-    
-       
-    \\end{aligned}
-  ''';
+      
+    \\end{aligned}''';
 }
 
 // ---------------------- MULTIPLY FRACTIONS ------------------------
 
 class MultiplyFractions implements Exercise {
-  final int nb1;
-  final int nb2;
+  final List<int> frac1;
+  final List<int> frac2;
 
-  MultiplyFractions(this.nb1, this.nb2);
+  MultiplyFractions(this.frac1, this.frac2);
 
   factory MultiplyFractions.random() {
-    final n1 = randomFromInterval(-12, 12);
-    final n2 = randomFromInterval(-12, 12);
-    return MultiplyFractions(n1, n2);
+    final f1 = randomFromInterval(-12, 12);
+    final f2 = randomFromInterval(-12, 12);
+    return MultiplyFractions(f1 as List<int>, f2 as List<int>);
   }
 
-  @override
-  String get question => '$nb1 \\times ${nb2 < 0 ? '($nb2)' : nb2}';
+  late final n1 = frac1[0];
+  late final d1 = frac1[1];
+  late final n2 = frac2[0];
+  late final d2 = frac2[1];
+  late final calculatedNumerator = n1 * n2;
+  late final calculatedDenominator = d1 * d2;
+  late final factSimplified = gcd(calculatedNumerator, calculatedDenominator);
+  late final simplifiedFraction = simplifyFraction([calculatedNumerator, calculatedDenominator]);
+
+
 
   @override
-  String get answer => (nb1 * nb2).toString();
+  String get question => '\\frac{$n1}{$d1} \\times \\frac{$n2}{$d2}';
 
   @override
-  String? get help => null;
+  String get answer => '\\frac{$simplifiedFraction[0]}{$simplifiedFraction[1]}';
 
   @override
-  String? get details => null;
+  String? get help => 'Liesaat div gevrenn a zo liesaat an daou niverer ha liesaat an daou anver.';
+
+  @override
+  String? get details => '''\\begin{aligned}
+    
+    $question &
+    =\\frac{$n1 \\times $n2}{$d1 \\times $d2} \\\\
+    &=\\frac{$calculatedNumerator}{$calculatedDenominator} \\\\
+    
+    
+    ${factSimplified != 1 || calculatedNumerator < 0 ? '&= $answer' : ''}
+      
+    \\end{aligned}''';
 }
 
 // ---------------------- DIVIDE FRACTIONS ------------------------
