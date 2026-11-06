@@ -10,6 +10,10 @@ const fractionOptions = <ExerciseOptions>[
   ExerciseOptions(id: 'divide', label: 'Rannañ'),
 ];
 
+String parenthesis(n) {
+  n < 0 ? '($n)' : '$n';
+}
+
 // ---------------------- SUM AND SUBTRACT FRACTIONS ------------------------
 
 class SumSubtractFractions implements Exercise {
@@ -72,7 +76,7 @@ class SumSubtractFractions implements Exercise {
         '\\frac{$n2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}}{$d2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}} \\\\'
         '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator} \\\\'
       : ''}
-    &=\\frac{${n1 * fact1} ${sumSubtract == 0 ? '+' : '-'} ${n2 * fact2 < 0 ? '(${n2 * fact2})' : n2 * fact2}}{$commonDenominator} \\\\
+    &=\\frac{${n1 * fact1} ${sumSubtract == 0 ? '+' : '-'} ${parenthesis(n2 * fact2)}}{$commonDenominator} \\\\
     &=\\frac{$calculatedNumerator}{$commonDenominator} \\\\
     
     ${factSimplified != 1 && (calculatedNumerator % calculatedDenominator != 0)
