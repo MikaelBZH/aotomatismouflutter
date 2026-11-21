@@ -237,7 +237,6 @@ class _ExercisesPageState extends State<ExercisesPage> {
                           _ExerciseSurface(
                             color: AppColors.mint,
                             borderColor: const Color(0xFFA6D2C9),
-                            textColor: AppColors.ink,
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Math.tex(
