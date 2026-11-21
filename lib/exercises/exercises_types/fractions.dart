@@ -155,30 +155,76 @@ class MultiplyFractions implements Exercise {
 // ---------------------- DIVIDE FRACTIONS ------------------------
 
 class DivideFractions implements Exercise {
-  final int nb1;
-  final int nb2;
+  final List<int> frac1;
+  final List<int> frac2;
 
-  DivideFractions(this.nb1, this.nb2);
+  DivideFractions(this.frac1, this.frac2);
 
   factory DivideFractions.random() {
-    final n1 = randomFromInterval(-12, 12);
-    final n2 = randomFromInterval(-12, 12);
-    return DivideFractions(n1, n2);
+    final first = generateFraction(-12, 12);
+    final second = generateFraction(-12, 12);
+    return DivideFractions(first, second);
   }
 
-  late int nb3 = nb1 * nb2;
+  late final n1 = frac1[0];
+  late final d1 = frac1[1];
+  late final n2 = frac2[0];
+  late final d2 = frac2[1];
+  late final questionAsNestedFraction = Random().nextBool();
+  late final rawNumerator = n1 * d2;
+  late final rawDenominator = d1 * n2;
+  late final calculatedNumerator =
+      rawDenominator < 0 ? -rawNumerator : rawNumerator;
+  late final calculatedDenominator = rawDenominator.abs();
+  late final factSimplified = calculatedDenominator == 0
+      ? 1
+      : gcd(calculatedNumerator, calculatedDenominator);
+  late final simplifiedFraction = calculatedDenominator == 0
+      ? <int>[0, 1, 1]
+      : simplifyFraction([calculatedNumerator, calculatedDenominator]);
 
   @override
-  String get question => '$nb3 \\div ${nb2 < 0 ? '($nb2)' : nb2}';
+  String get question => questionAsNestedFraction
+      ? '\\frac{\\frac{$n1}{$d1}}{\\frac{$n2}{$d2}}'
+      : '\\frac{$n1}{$d1} \\div \\frac{$n2}{$d2}';
 
   @override
-  String get answer => nb2 == 0 ? '\\text{Dibosupl}' : '$nb1';
+  String get answer {
+    if (calculatedDenominator == 0) return '\\text{Dibosupl}';
+    if (calculatedNumerator % calculatedDenominator == 0) {
+      return (calculatedNumerator ~/ calculatedDenominator).toString();
+    }
+    final numerator = simplifiedFraction[0];
+    final denominator = simplifiedFraction[1];
+    final magnitude = numerator.abs();
+    return numerator < 0
+        ? '- \\frac{$magnitude}{$denominator}'
+        : '\\frac{$numerator}{$denominator}';
+  }
 
   @override
-  String? get help => nb2 == 0 ? "Tu 'zo rannañ dre zero ?" : null;
+  String? get help =>
+      'Diviser par une fraction revient à multiplier par son inverse.';
 
   @override
-  String? get details => null;
+  String? get details {
+    if (calculatedDenominator == 0) {
+      return '$question = \\text{Dibosupl}';
+    }
+    final reducedNumerator = calculatedNumerator ~/ factSimplified;
+    final reducedDenominator = calculatedDenominator ~/ factSimplified;
+    final reduction = factSimplified == 1
+        ? ''
+        : '&= \\frac{$calculatedNumerator \\div $factSimplified}{$calculatedDenominator \\div $factSimplified} \\\\
+    &= \\frac{$reducedNumerator}{$reducedDenominator} \\\\';
+    return '''\\begin{aligned}
+    $question
+    &= \\frac{$n1}{$d1} \\times \\frac{$d2}{$n2} \\\\
+    &= \\frac{$rawNumerator}{$rawDenominator} \\\\
+    $reduction
+    &= $answer
+    \\end{aligned}''';
+  }
 }
 
 /*------------------------------------------------------------------------------
