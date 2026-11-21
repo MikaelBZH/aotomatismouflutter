@@ -49,13 +49,27 @@ class _ExercisesPageState extends State<ExercisesPage> {
   }
 
   Future<void> _showHelp() async {
-    final help = exercise?.help;
+    final currentExercise = exercise;
+    final help = currentExercise?.help;
     if (help == null) return;
+    final visual = currentExercise is IllustratedExercise
+        ? currentExercise.visual
+        : null;
+    final helpContent = visual?.kind == ExerciseVisualKind.conversion
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(help, style: Theme.of(context).textTheme.bodyLarge),
+              ExerciseVisualPanel(visual: visual!),
+            ],
+          )
+        : Text(help, style: Theme.of(context).textTheme.bodyLarge);
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => _InformationDialog(
         title: 'Skoazell',
-        content: Text(help, style: Theme.of(dialogContext).textTheme.bodyLarge),
+        content: helpContent,
         icon: Icons.lightbulb_outline,
         color: AppColors.teal,
       ),
@@ -196,10 +210,12 @@ class _ExercisesPageState extends State<ExercisesPage> {
                                   icon: const Icon(Icons.help_outline),
                                 ),
                         ),
-                        if (visual != null)
+                        if (visual != null &&
+                            visual.kind != ExerciseVisualKind.conversion)
                           ExerciseVisualPanel(
                             key: ValueKey(currentExercise?.question),
                             visual: visual,
+                            revealSolution: displayAnswer,
                           ),
                         const SizedBox(height: 16),
                         Wrap(
