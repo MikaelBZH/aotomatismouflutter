@@ -30,27 +30,42 @@ String _chooseDataOption(Set<String> selectedOptions) {
 Exercise? randomPercentage(Set<String> selectedOptions) {
   if (selectedOptions.isEmpty) return null;
   if (_chooseDataOption(selectedOptions) == 'ofNumber') {
-    final percent = [10, 20, 25, 50, 75][randomFromInterval(0, 4)];
-    final number = [80, 120, 200, 240, 360][randomFromInterval(0, 4)];
-    final result = percent * number ~/ 100;
+    final percent = [1, 10, 25, 50, 100][randomFromInterval(0, 4)];
+    final number = randomFromInterval(1, 150);
+    final result = percent * number / 100;
+    final multiplier = switch (percent) {
+      1 => '0{,}01',
+      10 => '0{,}1',
+      25 => '\\frac{1}{4}',
+      50 => '\\frac{1}{2}',
+      _ => '1',
+    };
+    final multiplierText = switch (percent) {
+      1 => '0,01',
+      10 => '0,1',
+      25 => '1/4',
+      50 => '1/2',
+      _ => '1',
+    };
     return Exercise(
       question: '\\text{Calculer } $percent\\% \\text{ de } $number',
-      answer: '$result',
-      help: '$percent\\% = \\frac{$percent}{100}.',
-      details: '$percent\\% \\text{ de } $number = \\frac{$percent}{100} \\times $number = $result',
+      answer: _decimal(result),
+      help: '$percent % = $multiplierText.',
+      details: '$percent\\% \\text{ de } $number = $number \\times $multiplier = ${_decimal(result)}',
     );
   }
 
-  final percent = [10, 20, 25, 30, 40, 50][randomFromInterval(0, 5)];
-  final original = [100, 200, 400, 500][randomFromInterval(0, 3)];
+  final percent = randomFromInterval(1, 10) * 10;
+  final original = randomFromInterval(1, 5) * 100;
   final increase = randomFromInterval(0, 1) == 0;
-  final coefficient = 100 + (increase ? percent : -percent);
-  final result = original * coefficient ~/ 100;
+  final multiplier = 1 + (increase ? percent : -percent) / 100;
+  final change = original * percent / 100;
+  final result = original * multiplier;
   return Exercise(
     question: '\\text{Calculer } $original \\text{ } ${increase ? 'augmenté' : 'diminué'} \\text{ de } $percent\\%.',
-    answer: '$result',
+    answer: _decimal(result),
     help: 'Utilise le coefficient multiplicateur correspondant à l’augmentation ou à la diminution.',
-    details: '$original \\times \\frac{$coefficient}{100} = $result',
+    details: '$original \\times (1 ${increase ? '+' : '-'} \\frac{$percent}{100}) = $original \\times ${_decimal(multiplier)} = ${_decimal(result)} \\quad (${increase ? '$original + ${_decimal(change)}' : '$original - ${_decimal(change)}'})',
   );
 }
 
@@ -58,128 +73,167 @@ Exercise? randomArea(Set<String> selectedOptions) {
   if (selectedOptions.isEmpty) return null;
   final shape = _chooseDataOption(selectedOptions);
   if (shape == 'triangle') {
-    final base = randomFromInterval(4, 20);
-    final height = randomFromInterval(2, 16);
+    final m = randomFromInterval(2, 5);
+    var n = randomFromInterval(1, m - 1);
+    while (gcd(m, n) != 1 || (m - n).isEven) {
+      n = randomFromInterval(1, m - 1);
+    }
+    const scales = [0.5, 1.5, 2.0, 2.5];
+    final scale = scales[randomFromInterval(0, scales.length - 1)];
+    final baseFoot = (m * m - n * n) * scale;
+    final height = 2 * m * n * scale;
+    final side = (m * m + n * n) * scale;
+    var signedBase = baseFoot + randomFromInterval(-5, 10);
+    while (signedBase == 0) {
+      signedBase = baseFoot + randomFromInterval(-5, 10);
+    }
+    final base = signedBase.abs();
+    final diagramFoot = signedBase < 0 ? -baseFoot : baseFoot;
+    final area = base * height / 2;
     return IllustratedExercise(
-      question: '\\text{Un triangle a une base de } ${base}\\,cm \\text{ et une hauteur de } ${height}\\,cm. \\text{Calculer son aire.}',
-      answer: '\\frac{${base * height}}{2}\\,cm^2',
-      help: 'Aire du triangle = base × hauteur ÷ 2.',
-      details: '\\mathcal{A} = \\frac{$base \\times $height}{2} = \\frac{${base * height}}{2}\\,cm^2',
+      question: '\\text{Calculer l’aire du triangle ABC sachant que } AB = ${_decimal(base)}\\,cm, CD = ${_decimal(height)}\\,cm, AC = ${_decimal(side)}\\,cm \\text{ et } AB \\perp CD.',
+      answer: '${_decimal(area)}\\,cm^2',
+      help: 'Repère la base et la hauteur perpendiculaire. La troisième longueur est une donnée à distinguer.',
+      details: '\\mathcal{A}_{ABC} = \\frac{AB \\times CD}{2} = \\frac{${_decimal(base)} \\times ${_decimal(height)}}{2} = ${_decimal(area)}\\,cm^2',
       visual: ExerciseVisual(
         kind: ExerciseVisualKind.triangle,
-        labelA: 'base = $base cm',
-        labelB: 'h = $height cm',
+        labelA: 'AB = ${_plainDecimal(base)} cm',
+        labelB: 'CD = ${_plainDecimal(height)} cm',
+        labelC: 'AC = ${_plainDecimal(side)} cm',
+        triangleBase: base,
+        triangleFoot: diagramFoot,
+        triangleHeight: height,
       ),
     );
   }
   if (shape == 'circle') {
-    final radius = randomFromInterval(2, 12);
-    final area = (3.14 * radius * radius * 100).round() / 100;
-    return IllustratedExercise(
-      question: '\\text{Un disque a un rayon de } ${radius}\\,cm. \\text{Calculer son aire avec } \\pi \\approx 3{,}14.',
-      answer: '${_decimal(area)}\\,cm^2',
-      help: 'Aire du disque = π × rayon².',
-      details: '\\mathcal{A} = 3{,}14 \\times $radius^2 \\approx ${_decimal(area)}\\,cm^2',
-      visual: ExerciseVisual(
-        kind: ExerciseVisualKind.circle,
-        labelA: 'r = $radius cm',
-      ),
+    final giveRadius = randomFromInterval(0, 1) == 0;
+    final radius = randomFromInterval(1, 12);
+    final diameter = radius * 2;
+    final question = giveRadius
+        ? '\\text{Calculer l’aire du disque de centre B sachant que son rayon } AB = ${radius}\\,cm.'
+        : '\\text{Calculer l’aire du disque de centre B sachant que son diamètre } AC = ${diameter}\\,cm.';
+    final radiusDetails = giveRadius
+        ? 'AB = $radius\\,cm'
+        : 'AB = AC \\div 2 = $diameter \\div 2 = $radius\\,cm';
+    return Exercise(
+      question: question,
+      answer: '${radius * radius}\\pi\\,cm^2',
+      help: 'L’aire exacte d’un disque s’écrit pi multiplié par le rayon au carré. Si le diamètre est donné, commence par trouver le rayon.',
+      details: '$radiusDetails \\quad \\mathcal{A} = \\pi \\times $radius^2 = ${radius * radius}\\pi\\,cm^2',
     );
   }
-  final length = randomFromInterval(3, 20);
-  final width = randomFromInterval(2, 15);
-  return IllustratedExercise(
-    question: '\\text{Un rectangle mesure } ${length}\\,cm \\text{ sur } ${width}\\,cm. \\text{Calculer son aire.}',
+  final length = randomFromInterval(2, 12);
+  final width = randomFromInterval(2, 12);
+  return Exercise(
+    question: '\\text{Calculer l’aire du rectangle ABCD sachant que } AB = ${length}\\,cm \\text{ et } BC = ${width}\\,cm.',
     answer: '${length * width}\\,cm^2',
-    help: 'Aire du rectangle = longueur × largeur.',
-    details: '\\mathcal{A} = $length \\times $width = ${length * width}\\,cm^2',
-    visual: ExerciseVisual(
-      kind: ExerciseVisualKind.rectangle,
-      labelA: '$length cm',
-      labelB: '$width cm',
-    ),
+    help: 'Un rectangle a deux dimensions perpendiculaires : sa longueur et sa largeur.',
+    details: '\\mathcal{A}_{ABCD} = AB \\times BC = $length \\times $width = ${length * width}\\,cm^2',
   );
 }
 
 Exercise? randomConversion(Set<String> selectedOptions) {
   if (selectedOptions.isEmpty) return null;
-  switch (_chooseDataOption(selectedOptions)) {
-    case 'length':
-      final amount = randomFromInterval(2, 95) * 10;
-      return IllustratedExercise(
-        question: '\\text{Convertir } ${amount}\\,cm \\text{ en mètres.}',
-        answer: '\\frac{$amount}{100}\\,m',
-        help: '1 m = 100 cm.',
-        details: '${amount}\\,cm = \\frac{$amount}{100}\\,m',
-        visual: ExerciseVisual(
-          kind: ExerciseVisualKind.conversion,
-          units: const ['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'],
-          fromColumn: 5,
-          toColumn: 3,
-          sourceValue: '$amount',
-          targetValue: _plainDecimal(amount / 100),
-          sourceUnit: 'cm',
-          targetUnit: 'm',
-        ),
-      );
-    case 'area':
-      final amount = randomFromInterval(2, 80);
-      return IllustratedExercise(
-        question: '\\text{Convertir } ${amount * 10000}\\,cm^2 \\text{ en } m^2.',
-        answer: '${amount}\\,m^2',
-        help: '1 m² = 10 000 cm² : pour les aires, le facteur est au carré.',
-        details: '${amount * 10000}\\,cm^2 = ${amount}\\,m^2',
-        visual: ExerciseVisual(
-          kind: ExerciseVisualKind.conversion,
-          units: const ['km²', 'hm²', 'dam²', 'm²', 'dm²', 'cm²', 'mm²'],
-          columnsPerUnit: 2,
-          fromColumn: 11,
-          toColumn: 7,
-          sourceValue: '${amount * 10000}',
-          targetValue: '$amount',
-          sourceUnit: 'cm²',
-          targetUnit: 'm²',
-        ),
-      );
-    case 'volume':
-      final amount = randomFromInterval(2, 50);
-      return IllustratedExercise(
-        question: '\\text{Convertir } ${amount * 1000000}\\,cm^3 \\text{ en } m^3.',
-        answer: '${amount}\\,m^3',
-        help: '1 m³ = 1 000 000 cm³ : pour les volumes, le facteur est au cube.',
-        details: '${amount * 1000000}\\,cm^3 = ${amount}\\,m^3',
-        visual: ExerciseVisual(
-          kind: ExerciseVisualKind.conversion,
-          units: const ['km³', 'hm³', 'dam³', 'm³', 'dm³', 'cm³', 'mm³'],
-          columnsPerUnit: 3,
-          fromColumn: 17,
-          toColumn: 11,
-          sourceValue: '${amount * 1000000}',
-          targetValue: '$amount',
-          sourceUnit: 'cm³',
-          targetUnit: 'm³',
-        ),
-      );
-    default:
-      final amount = randomFromInterval(2, 50);
-      return IllustratedExercise(
-        question: '\\text{Convertir } ${amount * 1000}\\,mL \\text{ en litres.}',
-        answer: '${amount}\\,L',
-        help: '1 L = 1 000 mL.',
-        details: '${amount * 1000}\\,mL = ${amount}\\,L',
-        visual: ExerciseVisual(
-          kind: ExerciseVisualKind.conversion,
-          units: const ['kL', 'hL', 'daL', 'L', 'dL', 'cL', 'mL'],
-          fromColumn: 6,
-          toColumn: 3,
-          sourceValue: '${amount * 1000}',
-          targetValue: '$amount',
-          sourceUnit: 'mL',
-          targetUnit: 'L',
-        ),
-      );
+  final type = _chooseDataOption(selectedOptions);
+  final units = switch (type) {
+    'length' => const ['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'],
+    'area' => const ['km²', 'hm²', 'dam²', 'm²', 'dm²', 'cm²', 'mm²'],
+    'volume' => const ['km³', 'hm³', 'dam³', 'm³', 'dm³', 'cm³', 'mm³'],
+    _ => const ['(kL)', 'hL', 'daL', 'L', 'dL', 'cL', 'mL'],
+  };
+  final columnsPerUnit = type == 'area' ? 2 : type == 'volume' ? 3 : 1;
+  final from = randomFromInterval(0, units.length - 1);
+  var to = randomFromInterval(0, units.length - 1);
+  while (to == from) {
+    to = randomFromInterval(0, units.length - 1);
   }
+
+  final decimalPlaces = randomFromInterval(0, 3);
+  final scale = pow(10, decimalPlaces).toInt();
+  final rawValue = randomFromInterval(0, 999 * scale);
+  final sourceValue = (rawValue / scale).toStringAsFixed(decimalPlaces);
+  final sourceText = _trimDecimal(sourceValue);
+  final shift = (to - from) * columnsPerUnit;
+  final targetText = _shiftDecimal(sourceText, shift);
+  var sourceUnitText = units[from];
+  var targetUnitText = units[to];
+  if (type == 'litre') {
+    if (from == 0) sourceUnitText = 'm³';
+    if (to == 0) targetUnitText = 'm³';
+    if ((from == 3 || to == 3) && Random().nextBool()) {
+      if (from == 3) sourceUnitText = 'dm³';
+      if (to == 3) targetUnitText = 'dm³';
+    }
+    if ((from == 6 || to == 6) && Random().nextBool()) {
+      if (from == 6) sourceUnitText = 'cm³';
+      if (to == 6) targetUnitText = 'cm³';
+    }
+  }
+  final sourceUnit = _unitLatex(sourceUnitText, type);
+  final targetUnit = _unitLatex(targetUnitText, type);
+  final sourceLatex = sourceText.replaceAll(',', '{,}');
+  final targetLatex = targetText.replaceAll(',', '{,}');
+  final help = switch (columnsPerUnit) {
+    2 => 'Dans un tableau d’aires, chaque changement d’unité déplace la virgule de deux rangs.',
+    3 => 'Dans un tableau de volumes, chaque changement d’unité déplace la virgule de trois rangs.',
+    _ => 'Place le nombre dans la colonne de l’unité de départ, puis déplace la virgule jusqu’à l’unité demandée.',
+  };
+
+  return IllustratedExercise(
+    question: '\\text{Convertir } $sourceLatex\\,${sourceUnit} \\text{ en } $targetUnit.',
+    answer: '$targetLatex\\,${targetUnit}',
+    help: help,
+    details: '$sourceLatex\\,${sourceUnit} = $targetLatex\\,${targetUnit}',
+    visual: ExerciseVisual(
+      kind: ExerciseVisualKind.conversion,
+      units: units,
+      secondaryUnitLabels: type == 'litre'
+          ? const {2: 'm³', 5: 'dm³', 8: 'cm³'}
+          : const {},
+      columnsPerUnit: columnsPerUnit,
+      fromColumn: from,
+      toColumn: to,
+      sourceValue: sourceText,
+      targetValue: targetText,
+      sourceUnit: sourceUnitText,
+      targetUnit: targetUnitText,
+    ),
+  );
 }
+
+String _unitLatex(String unit, String type) => switch (type) {
+      'area' => unit.replaceAll('²', '^{2}'),
+      'volume' => unit.replaceAll('³', '^{3}'),
+      'litre' => unit.replaceAll('³', '^{3}'),
+      _ => unit,
+    };
+
+String _trimDecimal(String value) {
+  final parts = value.replaceAll(',', '.').split('.');
+  final integer = parts.first.replaceFirst(RegExp(r'^0+'), '');
+  final whole = integer.isEmpty ? '0' : integer;
+  final decimals = parts.length > 1
+      ? parts[1].replaceFirst(RegExp(r'0+$'), '')
+      : '';
+  return decimals.isEmpty ? whole : '$whole,$decimals';
+}
+
+String _shiftDecimal(String value, int places) {
+  final normalized = value.replaceAll(',', '.');
+  final decimalIndex = normalized.indexOf('.');
+  final digits = normalized.replaceAll('.', '');
+  final originalPosition = decimalIndex < 0 ? digits.length : decimalIndex;
+  final newPosition = originalPosition + places;
+  final shifted = newPosition <= 0
+      ? '0.${_zeroes(-newPosition)}$digits'
+      : newPosition >= digits.length
+          ? '$digits${_zeroes(newPosition - digits.length)}'
+          : '${digits.substring(0, newPosition)}.${digits.substring(newPosition)}';
+  return _trimDecimal(shifted);
+}
+
+String _zeroes(int count) => List.filled(count, '0').join();
 
 String _decimal(num value) {
   var result = value.toStringAsFixed(2);
@@ -188,5 +242,7 @@ String _decimal(num value) {
   return result.replaceAll('.', '{,}');
 }
 
-String _plainDecimal(num value) => _decimal(value).replaceAll('{,}', ',');
+String _plainDecimal(num value) =>
+    _decimal(value).replaceAll('{,}', ',');
+
 
