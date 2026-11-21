@@ -123,19 +123,19 @@ class _ExercisesPageState extends State<ExercisesPage> {
               decoration: BoxDecoration(
                 border: Border(
                   left: const BorderSide(
-                    width: 12,
+                    width: 8,
                     color: Colors.blueAccent,
                   ),
                   top: BorderSide(
-                    width: 4,
+                    width: 1,
                     color: Colors.blueAccent,
                   ),
                   right: BorderSide(
-                    width: 4,
+                    width: 1,
                     color: Colors.blueAccent,
                   ),
                   bottom: BorderSide(
-                    width: 4,
+                    width: 1,
                     color: Colors.blueAccent,
                   ),
                 ),
@@ -175,7 +175,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Container(
-                                    color: Colors.orange[500],
+                                    color: Colors.blue[500],
                                     padding: const EdgeInsets.all(12),
                                     child: const Text(
                                       'Skoazell',
@@ -233,6 +233,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 // First button
                 Expanded( // Prendre la place disponible
                   child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll<Color?>(Colors.green[100]),
+                    ),
                     onPressed: () {
                       setState(() {
                         if (controller.isExpanded) {
@@ -252,6 +255,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 // Second button
                 Expanded(
                   child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll<Color?>(Colors.blue[100]),
+                    ),
                     onPressed: () {
                       setState(() {
                         exercise = widget.module.generateExercise(selectedOptions);
@@ -277,19 +283,19 @@ class _ExercisesPageState extends State<ExercisesPage> {
                 decoration: BoxDecoration(
                   border: Border(
                     left: const BorderSide(
-                      width: 12,
+                      width: 8,
                       color: Colors.green,
                     ),
                     top: BorderSide(
-                      width: 4,
+                      width: 1,
                       color: Colors.green,
                     ),
                     right: BorderSide(
-                      width: 4,
+                      width: 1,
                       color: Colors.green,
                     ),
                     bottom: BorderSide(
-                      width: 4,
+                      width: 1,
                       color: Colors.green,
                     ),
                   ),

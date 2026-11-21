@@ -10,8 +10,8 @@ const fractionOptions = <ExerciseOptions>[
   ExerciseOptions(id: 'divide', label: 'Rannañ'),
 ];
 
-String parenthesis(n) {
-  n < 0 ? '($n)' : '$n';
+String parenthesis(int n) {
+  return n < 0 ? '($n)' : '$n';
 }
 
 // ---------------------- SUM AND SUBTRACT FRACTIONS ------------------------
@@ -99,9 +99,9 @@ class MultiplyFractions implements Exercise {
   MultiplyFractions(this.frac1, this.frac2);
 
   factory MultiplyFractions.random() {
-    final f1 = randomFromInterval(-12, 12);
-    final f2 = randomFromInterval(-12, 12);
-    return MultiplyFractions(f1 as List<int>, f2 as List<int>);
+    final f1 = generateFraction(-12, 12);
+    final f2 = generateFraction(-12, 12);
+    return MultiplyFractions(f1, f2);
   }
 
   late final n1 = frac1[0];
@@ -113,13 +113,24 @@ class MultiplyFractions implements Exercise {
   late final factSimplified = gcd(calculatedNumerator, calculatedDenominator);
   late final simplifiedFraction = simplifyFraction([calculatedNumerator, calculatedDenominator]);
 
-
-
   @override
   String get question => '\\frac{$n1}{$d1} \\times \\frac{$n2}{$d2}';
 
   @override
-  String get answer => '\\frac{$simplifiedFraction[0]}{$simplifiedFraction[1]}';
+  String get answer {
+    if (calculatedNumerator % calculatedDenominator == 0) {
+      return '${calculatedNumerator ~/ calculatedDenominator}';
+    }
+
+    final numerator = simplifiedFraction[0];
+    final denominator = simplifiedFraction[1];
+
+    if (numerator < 0) {
+      return '- \\frac{${numerator.abs()}}{$denominator}';
+    }
+
+    return '\\frac{$numerator}{$denominator}';
+  }
 
   @override
   String? get help => 'Liesaat div gevrenn a zo liesaat an daou niverer ha liesaat an daou anver.';
@@ -130,7 +141,11 @@ class MultiplyFractions implements Exercise {
     $question &
     =\\frac{$n1 \\times $n2}{$d1 \\times $d2} \\\\
     &=\\frac{$calculatedNumerator}{$calculatedDenominator} \\\\
-    
+    ${factSimplified != 1 && (calculatedNumerator % calculatedDenominator != 0)
+      ? '\\text{Simplaat :} \\\\'
+      '&=\\frac{$calculatedNumerator \\color{red}{\\div $factSimplified}}{$calculatedDenominator \\color{red}{\\div $factSimplified}} \\\\'
+      '&=\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}} \\\\'
+      : '\\\\'}
     
     ${factSimplified != 1 || calculatedNumerator < 0 ? '&= $answer' : ''}
       
