@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../../functions/utils.dart';
 import '../../models/exercises.dart';
+import '../../models/exercise_visual.dart';
 
 const percentageOptions = <ExerciseOptions>[
   ExerciseOptions(id: 'ofNumber', label: 'Dregantad un niver'),
@@ -59,30 +60,44 @@ Exercise? randomArea(Set<String> selectedOptions) {
   if (shape == 'triangle') {
     final base = randomFromInterval(4, 20);
     final height = randomFromInterval(2, 16);
-    return Exercise(
+    return IllustratedExercise(
       question: '\\text{Un triangle a une base de } ${base}\\,cm \\text{ et une hauteur de } ${height}\\,cm. \\text{Calculer son aire.}',
       answer: '\\frac{${base * height}}{2}\\,cm^2',
       help: 'Aire du triangle = base × hauteur ÷ 2.',
       details: '\\mathcal{A} = \\frac{$base \\times $height}{2} = \\frac{${base * height}}{2}\\,cm^2',
+      visual: ExerciseVisual(
+        kind: ExerciseVisualKind.triangle,
+        labelA: 'base = $base cm',
+        labelB: 'h = $height cm',
+      ),
     );
   }
   if (shape == 'circle') {
     final radius = randomFromInterval(2, 12);
     final area = (3.14 * radius * radius * 100).round() / 100;
-    return Exercise(
+    return IllustratedExercise(
       question: '\\text{Un disque a un rayon de } ${radius}\\,cm. \\text{Calculer son aire avec } \\pi \\approx 3{,}14.',
       answer: '${_decimal(area)}\\,cm^2',
       help: 'Aire du disque = π × rayon².',
       details: '\\mathcal{A} = 3{,}14 \\times $radius^2 \\approx ${_decimal(area)}\\,cm^2',
+      visual: ExerciseVisual(
+        kind: ExerciseVisualKind.circle,
+        labelA: 'r = $radius cm',
+      ),
     );
   }
   final length = randomFromInterval(3, 20);
   final width = randomFromInterval(2, 15);
-  return Exercise(
+  return IllustratedExercise(
     question: '\\text{Un rectangle mesure } ${length}\\,cm \\text{ sur } ${width}\\,cm. \\text{Calculer son aire.}',
     answer: '${length * width}\\,cm^2',
     help: 'Aire du rectangle = longueur × largeur.',
     details: '\\mathcal{A} = $length \\times $width = ${length * width}\\,cm^2',
+    visual: ExerciseVisual(
+      kind: ExerciseVisualKind.rectangle,
+      labelA: '$length cm',
+      labelB: '$width cm',
+    ),
   );
 }
 
@@ -91,35 +106,77 @@ Exercise? randomConversion(Set<String> selectedOptions) {
   switch (_chooseDataOption(selectedOptions)) {
     case 'length':
       final amount = randomFromInterval(2, 95) * 10;
-      return Exercise(
+      return IllustratedExercise(
         question: '\\text{Convertir } ${amount}\\,cm \\text{ en mètres.}',
         answer: '\\frac{$amount}{100}\\,m',
         help: '1 m = 100 cm.',
         details: '${amount}\\,cm = \\frac{$amount}{100}\\,m',
+        visual: ExerciseVisual(
+          kind: ExerciseVisualKind.conversion,
+          units: const ['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'],
+          fromColumn: 5,
+          toColumn: 3,
+          sourceValue: '$amount',
+          targetValue: _plainDecimal(amount / 100),
+          sourceUnit: 'cm',
+          targetUnit: 'm',
+        ),
       );
     case 'area':
       final amount = randomFromInterval(2, 80);
-      return Exercise(
+      return IllustratedExercise(
         question: '\\text{Convertir } ${amount * 10000}\\,cm^2 \\text{ en } m^2.',
         answer: '${amount}\\,m^2',
         help: '1 m² = 10 000 cm² : pour les aires, le facteur est au carré.',
         details: '${amount * 10000}\\,cm^2 = ${amount}\\,m^2',
+        visual: ExerciseVisual(
+          kind: ExerciseVisualKind.conversion,
+          units: const ['km²', 'hm²', 'dam²', 'm²', 'dm²', 'cm²', 'mm²'],
+          columnsPerUnit: 2,
+          fromColumn: 11,
+          toColumn: 7,
+          sourceValue: '${amount * 10000}',
+          targetValue: '$amount',
+          sourceUnit: 'cm²',
+          targetUnit: 'm²',
+        ),
       );
     case 'volume':
       final amount = randomFromInterval(2, 50);
-      return Exercise(
+      return IllustratedExercise(
         question: '\\text{Convertir } ${amount * 1000000}\\,cm^3 \\text{ en } m^3.',
         answer: '${amount}\\,m^3',
         help: '1 m³ = 1 000 000 cm³ : pour les volumes, le facteur est au cube.',
         details: '${amount * 1000000}\\,cm^3 = ${amount}\\,m^3',
+        visual: ExerciseVisual(
+          kind: ExerciseVisualKind.conversion,
+          units: const ['km³', 'hm³', 'dam³', 'm³', 'dm³', 'cm³', 'mm³'],
+          columnsPerUnit: 3,
+          fromColumn: 17,
+          toColumn: 11,
+          sourceValue: '${amount * 1000000}',
+          targetValue: '$amount',
+          sourceUnit: 'cm³',
+          targetUnit: 'm³',
+        ),
       );
     default:
       final amount = randomFromInterval(2, 50);
-      return Exercise(
+      return IllustratedExercise(
         question: '\\text{Convertir } ${amount * 1000}\\,mL \\text{ en litres.}',
         answer: '${amount}\\,L',
         help: '1 L = 1 000 mL.',
         details: '${amount * 1000}\\,mL = ${amount}\\,L',
+        visual: ExerciseVisual(
+          kind: ExerciseVisualKind.conversion,
+          units: const ['kL', 'hL', 'daL', 'L', 'dL', 'cL', 'mL'],
+          fromColumn: 6,
+          toColumn: 3,
+          sourceValue: '${amount * 1000}',
+          targetValue: '$amount',
+          sourceUnit: 'mL',
+          targetUnit: 'L',
+        ),
       );
   }
 }
@@ -130,4 +187,6 @@ String _decimal(num value) {
   result = result.replaceFirst(RegExp(r'\.$'), '');
   return result.replaceAll('.', '{,}');
 }
+
+String _plainDecimal(num value) => _decimal(value).replaceAll('{,}', ',');
 
