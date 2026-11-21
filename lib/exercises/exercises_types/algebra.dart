@@ -16,7 +16,7 @@ const expansionOptions = <ExerciseOptions>[
 ];
 
 const powerOptions = <ExerciseOptions>[
-  ExerciseOptions(id: 'calculate', label: 'Jedañ ur galloud'),
+  ExerciseOptions(id: 'calculate', label: 'Jediñ ur galloud'),
   ExerciseOptions(id: 'product', label: 'Liesaat galloudoù'),
   ExerciseOptions(id: 'quotient', label: 'Rannañ galloudoù'),
 ];
