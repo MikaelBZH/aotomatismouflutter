@@ -1,88 +1,126 @@
 import 'package:flutter/material.dart';
-import '../pages/exercises_page.dart';
-import '../pages/home_page.dart';
+
 import '../exercises/exercise_catalog.dart';
+import '../models/exercises.dart';
+import '../pages/exercises_page.dart';
+import '../theme/app_theme.dart';
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final itemStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        );
+
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
+      child: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+          children: [
+            Container(
+              height: 112,
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
               decoration: BoxDecoration(
-                color: Colors.orange[400],
+                color: const Color(0x1AFFFFFF),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0x1AFFFFFF)),
               ),
-              child: const Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  'Aotomatismoù',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
+              alignment: Alignment.bottomLeft,
+              child: const Text(
+                'Aotomatismoù',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 23,
+                  fontWeight: FontWeight.w900,
                 ),
-              )
-          ),
-
-          // Menu Home
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text(
-              'Degemer',
-              style: TextStyle(fontSize: 16),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-            },
-          ),
-
-          const Divider(),
-
-          // Exercises Menu
-          ...exerciseCategories.map((category) {
-            final modules = exerciseCatalog
-              .where((module) => module.categoryId == category.id)
-              .toList();
-            return ExpansionTile(
-              shape: const Border(),
-              collapsedShape: const Border(),
-              leading: const Icon(Icons.category),
-              title: Text(
-                  category.title,
-                  style: TextStyle(fontSize: 16),
               ),
-              children: modules.map((module) {
-                return ListTile(
-                  contentPadding: EdgeInsets.only(left: 32),
-                  horizontalTitleGap: 10,
-                  leading: const Icon(Icons.book),
-                  title: Text(
-                      module.title,
-                      style: TextStyle(fontSize: 14),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ExercisesPage(module: module),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home_outlined, color: Colors.white),
+              title: Text('Degemer', style: itemStyle),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              onTap: () {
+                final navigator = Navigator.of(context);
+                navigator.pop();
+                navigator.popUntil((route) => route.isFirst);
+              },
+            ),
+            const Divider(height: 18, color: Color(0x22FFFFFF)),
+            for (final category in exerciseCategories)
+              Theme(
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                        onSurface: Colors.white,
                       ),
-                    ); // push
-                  }, //onTap
-                );
-              }).toList(),
-            );
-          }), // ...exerciseCategories.map
-        ], // children ListView
+                ),
+                child: ExpansionTile(
+                  leading: const Icon(Icons.category_outlined, color: Colors.white),
+                  iconColor: Colors.white,
+                  collapsedIconColor: Colors.white70,
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+                  childrenPadding: const EdgeInsets.only(left: 14, bottom: 6),
+                  collapsedShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(color: Color(0x1AFFFFFF)),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(color: Color(0x1AFFFFFF)),
+                  ),
+                  collapsedBackgroundColor: const Color(0x14FFFFFF),
+                  title: Text(
+                    category.title,
+                    style: itemStyle?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  children: [
+                    for (final module in exerciseCatalog.where(
+                      (item) => item.categoryId == category.id,
+                    ))
+                      ListTile(
+                        dense: true,
+                        visualDensity: VisualDensity.compact,
+                        leading: const Icon(
+                          Icons.book_outlined,
+                          size: 19,
+                          color: Colors.white70,
+                        ),
+                        title: Text(
+                          module.title,
+                          style: itemStyle?.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        shape: const Border(
+                          left: BorderSide(color: AppColors.orange, width: 2),
+                        ),
+                        onTap: () => _openExercise(context, module),
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openExercise(BuildContext context, ExerciseModule module) {
+    final navigator = Navigator.of(context);
+    navigator.pop();
+    navigator.push(
+      MaterialPageRoute<void>(
+        builder: (_) => ExercisesPage(module: module),
       ),
     );
   }
 }
+

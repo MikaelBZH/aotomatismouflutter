@@ -1,383 +1,390 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import '../widgets/menu.dart';
+
 import '../models/exercises.dart';
+import '../theme/app_theme.dart';
+import '../widgets/menu.dart';
 
 class ExercisesPage extends StatefulWidget {
-  final ExerciseModule module;
+  const ExercisesPage({required this.module, super.key});
 
-  const ExercisesPage({
-    super.key,
-    required this.module,
-  });
+  final ExerciseModule module;
 
   @override
   State<ExercisesPage> createState() => _ExercisesPageState();
 }
 
 class _ExercisesPageState extends State<ExercisesPage> {
-
-  bool displayAnswer = false; // Permet de savoir si la deuxième zone de texte doit être affichée.
-
   late final Set<String> selectedOptions;
+  final ExpansibleController optionsController = ExpansibleController();
   Exercise? exercise;
-
-  final controller = ExpansibleController();
-
+  bool displayAnswer = false;
 
   @override
   void initState() {
     super.initState();
-
     selectedOptions = widget.module.options.map((option) => option.id).toSet();
     exercise = widget.module.generateExercise(selectedOptions);
   }
 
+  void _updateOption(String id, bool selected) {
+    setState(() {
+      if (selected) {
+        selectedOptions.add(id);
+      } else {
+        selectedOptions.remove(id);
+      }
+      exercise = widget.module.generateExercise(selectedOptions);
+      displayAnswer = false;
+    });
+  }
+
+  void _generateNext() {
+    setState(() {
+      exercise = widget.module.generateExercise(selectedOptions);
+      displayAnswer = false;
+    });
+  }
+
+  Future<void> _showHelp() async {
+    final help = exercise?.help;
+    if (help == null) return;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => _InformationDialog(
+        title: 'Skoazell',
+        content: Text(help, style: Theme.of(dialogContext).textTheme.bodyLarge),
+        icon: Icons.lightbulb_outline,
+        color: AppColors.teal,
+      ),
+    );
+  }
+
+  Future<void> _showDetails() async {
+    final details = exercise?.details;
+    if (details == null) return;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => _InformationDialog(
+        title: 'Difaziadenn',
+        content: Math.tex(
+          details,
+          textStyle: Theme.of(dialogContext).textTheme.bodyLarge,
+        ),
+        icon: Icons.fact_check_outlined,
+        color: AppColors.teal,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentExercise = exercise;
     return Scaffold(
-      // --------------------------------------------------
-      // APP BAR
-      // --------------------------------------------------
       appBar: AppBar(
-        title: Column (
+        title: Column(
           mainAxisSize: MainAxisSize.min,
-          children:[
-            Text(
-              'Aotomatismoù',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Aotomatismoù'),
             Text(
               widget.module.title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.muted,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ],
         ),
-        backgroundColor: Colors.orange[500],
-        centerTitle: true,
       ),
-
       drawer: const Menu(),
-
-      // --------------------------------------------------
-      // BODY
-      // --------------------------------------------------
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-
-        child: Column(
-          children: [
-
-            // --------------------------------------------------
-            // SWITCHLIST ZONE DE CHOIX
-            // --------------------------------------------------
-            if (widget.module.options.isNotEmpty)
-              ExpansionTile(
-                controller: controller,
-                shape: const Border(),
-                collapsedShape: const Border(),
-                title: Text(
-                  'Dibaboù posupl :',
-                  style: TextStyle(fontSize: 20),
-                ),
-                children: [
-                  ...widget.module.options.map((option) {
-                      return ListTile(
-                        dense: true,
-                      title: Text(
-                        option.label,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      trailing: Transform.scale(
-                        scale: 0.7,
-                        child: Switch(
-                          value: selectedOptions.contains(option.id),
-                          onChanged: (isSelected) {
-                            setState(() {
-                              if (isSelected) {
-                                selectedOptions.add(option.id);
-                              } else {
-                                selectedOptions.remove(option.id);
-                              }
-                              exercise = widget.module.generateExercise(selectedOptions);
-                              displayAnswer = false;
-                            }); // setState
-                          }, // onChanged
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 600;
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(compact ? 14 : 28),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 920),
+                child: Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(compact ? 18 : 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'OBERIADENNOÙ',
+                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: AppColors.teal,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.6,
+                              ),
                         ),
-                      ),
-                    );
-                  }),
-                ],
-              ),
-
-            // --------------------------------------------------
-            // QUESTION ZONE
-            // --------------------------------------------------
-            Container(
-              width: double.infinity, // toute la largeur disponible
-              height: 200,
-              padding: const EdgeInsets.all(12),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border(
-                  left: const BorderSide(
-                    width: 8,
-                    color: Colors.blueAccent,
-                  ),
-                  top: BorderSide(
-                    width: 1,
-                    color: Colors.blueAccent,
-                  ),
-                  right: BorderSide(
-                    width: 1,
-                    color: Colors.blueAccent,
-                  ),
-                  bottom: BorderSide(
-                    width: 1,
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-
-              child: Stack(
-                children: [
-                  Center(
-                    child: exercise == null
-                      ? Text("Dibab un oberiadenn d'an nebeutañ")
-                      : Math.tex(
-                          exercise!.question,
-                          textStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.module.title,
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        if (widget.module.options.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: AppColors.line),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: ExpansionTile(
+                              controller: optionsController,
+                              shape: const Border(),
+                              collapsedShape: const Border(),
+                              leading: const Icon(
+                                Icons.tune,
+                                color: AppColors.teal,
+                              ),
+                              title: const Text('Dibaboù posupl'),
+                              children: [
+                                for (final option in widget.module.options)
+                                  CheckboxListTile(
+                                    dense: true,
+                                    value: selectedOptions.contains(option.id),
+                                    title: Text(option.label),
+                                    controlAffinity:
+                                        ListTileControlAffinity.leading,
+                                    onChanged: (value) => _updateOption(
+                                      option.id,
+                                      value ?? false,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                      )
-                  ),
-
-                  // ---------------------- HELP ------------------------------
-
-                  if (exercise?.help != null && !displayAnswer)
-                    Positioned(
-                      top: -10,
-                      right: -10,
-                      child: IconButton(
-                        icon: const Icon(Icons.help_outline),
-                        tooltip: 'Skoazell',
-                        onPressed: () {
-                          showDialog<void>(
-                            context: context,
-                            builder: (dialogContext) => Dialog(
-                              clipBehavior: Clip.antiAlias,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Container(
-                                    color: Colors.blue[500],
-                                    padding: const EdgeInsets.all(12),
-                                    child: const Text(
-                                      'Skoazell',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                      ),
+                        ],
+                        const SizedBox(height: 20),
+                        _ExerciseSurface(
+                          child: currentExercise == null
+                              ? const Text(
+                                  "Dibab un oberiadenn d'an nebeutañ",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                )
+                              : FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Math.tex(
+                                    currentExercise.question,
+                                    textStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: compact ? 29 : 38,
+                                      fontWeight: FontWeight.w800,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(24),
-                                    child: Text(
-                                      exercise!.help!,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 8, bottom: 8),
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.orange[500],
-                                          foregroundColor: Colors.white,
-                                        ),
-                                        onPressed: () => Navigator.of(dialogContext).pop(),
-                                        child: const Text('Serriñ'),
-                                      )
-                                    ),
-                                  ),
-                                ],
+                                ),
+                          action: currentExercise?.help == null
+                              ? null
+                              : IconButton(
+                                  tooltip: 'Skoazell',
+                                  color: Colors.white,
+                                  onPressed: _showHelp,
+                                  icon: const Icon(Icons.help_outline),
+                                ),
+                        ),
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            FilledButton.icon(
+                              onPressed: currentExercise == null
+                                  ? null
+                                  : () {
+                                      if (optionsController.isExpanded) {
+                                        optionsController.collapse();
+                                      }
+                                      setState(
+                                        () => displayAnswer = !displayAnswer,
+                                      );
+                                    },
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppColors.teal,
+                                foregroundColor: Colors.white,
+                              ),
+                              icon: Icon(displayAnswer
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined),
+                              label: Text(
+                                displayAnswer ? 'Kuzhaat ar respont' : 'Respont',
                               ),
                             ),
-                          ); // showDialog
-                        }, // onPressed
-                      ),
+                            FilledButton.icon(
+                              onPressed: selectedOptions.isEmpty
+                                  ? null
+                                  : _generateNext,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppColors.orange,
+                                foregroundColor: Colors.white,
+                              ),
+                              icon: const Icon(Icons.refresh),
+                              label: const Text('Nevez'),
+                            ),
+                          ],
+                        ),
+                        if (displayAnswer && currentExercise != null) ...[
+                          const SizedBox(height: 16),
+                          _ExerciseSurface(
+                            color: AppColors.mint,
+                            borderColor: const Color(0xFFA6D2C9),
+                            textColor: AppColors.ink,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Math.tex(
+                                currentExercise.answer,
+                                textStyle: const TextStyle(
+                                  color: AppColors.ink,
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            action: currentExercise.details == null
+                                ? null
+                                : IconButton(
+                                    tooltip: 'Difaziadenn',
+                                    color: AppColors.teal,
+                                    onPressed: _showDetails,
+                                    icon: const Icon(
+                                      Icons.fact_check_outlined,
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ],
                     ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
 
-                  // -------------------- HELP ENDED --------------------------
+class _ExerciseSurface extends StatelessWidget {
+  const _ExerciseSurface({
+    required this.child,
+    this.color = AppColors.ink,
+    this.borderColor,
+    this.action,
+  });
 
+  final Widget child;
+  final Color color;
+  final Color? borderColor;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(minHeight: 160),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+      decoration: BoxDecoration(
+        color: color,
+        border: borderColor == null ? null : Border.all(color: borderColor!),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: color == AppColors.ink
+            ? const [
+                BoxShadow(
+                  color: Color(0x1F18344A),
+                  blurRadius: 22,
+                  offset: Offset(0, 8),
+                ),
+              ]
+            : null,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: action == null
+                ? EdgeInsets.zero
+                : const EdgeInsets.symmetric(horizontal: 28),
+            child: Center(child: child),
+          ),
+          if (action != null)
+            Positioned(top: -18, right: -18, child: action!),
+        ],
+      ),
+    );
+  }
+}
+
+class _InformationDialog extends StatelessWidget {
+  const _InformationDialog({
+    required this.title,
+    required this.content,
+    required this.icon,
+    required this.color,
+  });
+
+  final String title;
+  final Widget content;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: AppColors.paper,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              color: color,
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(icon, color: Colors.white),
+                  const SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 16), // Espace vertical
-
-            // --------------------------------------------------
-            // BUTTONS
-            // --------------------------------------------------
-            Row(
-              children: [
-
-                // First button
-                Expanded( // Prendre la place disponible
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll<Color?>(Colors.green[100]),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        if (controller.isExpanded) {
-                          controller.collapse();
-                        } // Changement de l'état de la page et reconstruction de l'interface
-                        displayAnswer = !displayAnswer;
-                      });
-                    },
-                    child: Text(
-                      displayAnswer ? 'Kuzhaat ar respont' : 'Diskouez ar respont',
-                    ),
+            Padding(padding: const EdgeInsets.all(24), child: content),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.orange,
+                    foregroundColor: Colors.white,
                   ),
+                  child: const Text('Serriñ'),
                 ),
-
-                const SizedBox(width: 12), // Horizontal space between both buttons
-
-                // Second button
-                Expanded(
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll<Color?>(Colors.blue[100]),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        exercise = widget.module.generateExercise(selectedOptions);
-                        displayAnswer = false;
-                      });
-                    },
-                    child: const Text('Nevez'),
-                  ),
-                ),
-              ], // Ending children in Row
+              ),
             ),
-
-            const SizedBox(height: 16),
-
-            // --------------------------------------------------
-            // ANSWER ZONE
-            // --------------------------------------------------
-            if (displayAnswer && exercise != null)
-              Container(
-                width: double.infinity,
-                height: 200,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: const BorderSide(
-                      width: 8,
-                      color: Colors.green,
-                    ),
-                    top: BorderSide(
-                      width: 1,
-                      color: Colors.green,
-                    ),
-                    right: BorderSide(
-                      width: 1,
-                      color: Colors.green,
-                    ),
-                    bottom: BorderSide(
-                      width: 1,
-                      color: Colors.green,
-                    ),
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Center(
-                      child: Math.tex(
-                        exercise!.answer,
-                        textStyle: const TextStyle(fontSize: 36),
-                      ),
-                    ),
-
-                    // ---------------------- DETAILS ---------------------------
-
-                    if (exercise?.details != null && displayAnswer)
-                      Positioned(
-                        top: -10,
-                        right: -10,
-                        child: IconButton(
-                          icon: const Icon(Icons.fact_check_outlined),
-                          tooltip: 'Difaziadenn',
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (dialogContext) => Dialog(
-                                clipBehavior: Clip.antiAlias,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    Container(
-                                      color: Colors.green[500],
-                                      padding: const EdgeInsets.all(12),
-                                      child: const Text(
-                                        'Difaziadenn',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(24),
-                                      child: Math.tex(
-                                        exercise!.details!,
-                                        textStyle: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 8, bottom: 8),
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.orange[500],
-                                            foregroundColor: Colors.white,
-                                          ),
-                                          onPressed: () => Navigator.of(dialogContext).pop(),
-                                          child: const Text('Serriñ'),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ); // showDialog
-                          }, // onPressed
-                        ), // iconButton
-                      ), // Positioned
-
-                    // --------------------- DETAILS ENDED --------------------------
-                    ],
-                  ),
-                ),
-              ], // Ending children in Column
+          ],
         ),
       ),
     );
   }
 }
+

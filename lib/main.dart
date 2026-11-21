@@ -1,34 +1,26 @@
-import 'pages/home_page.dart';
 import 'package:flutter/material.dart';
+
+import 'pages/home_page.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-runApp(const MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key}); // Class constructor
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( // Structure générale de l'application
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Aotomatismoù',
-
-      theme: ThemeData(
-        fontFamily: 'Andika',
-        textTheme: const TextTheme(
-          bodyLarge: TextStyle(fontSize: 48),
-          bodyMedium: TextStyle(fontSize: 24),
-          titleLarge: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.bold,),
-        ),
-      ),
-
-      home: const HomePage(), // Première page vue en lançant l'application
+      theme: AppTheme.light,
+      home: const HomePage(),
     );
   }
 }
+
 
 
