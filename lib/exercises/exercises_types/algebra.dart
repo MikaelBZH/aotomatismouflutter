@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../../functions/utils.dart';
 import '../../models/exercises.dart';
+import '../../models/exercise_visual.dart';
 
 const numberLineOptions = <ExerciseOptions>[
   ExerciseOptions(id: 'read', label: 'Lenn ar poent'),
@@ -71,11 +72,15 @@ Exercise? randomNumberLine(Set<String> selectedOptions) {
       : '\\frac{$simpleNumerator}{$simpleDenominator}';
 
   if (choice == 'read') {
-    return Exercise(
+    return IllustratedExercise(
       question: '\\text{Un point est à } $numerator \\text{ graduations de } \\frac{1}{$denominator}.\\text{ Quelle est son abscisse ?}',
       answer: answer,
       help: 'Chaque graduation représente une fraction de l’unité.',
       details: '\\frac{$numerator}{$denominator} = $answer',
+      visual: ExerciseVisual(
+        kind: ExerciseVisualKind.numberLine,
+        numberValue: numerator / denominator,
+      ),
     );
   }
   return Exercise(
@@ -132,13 +137,13 @@ Exercise? randomPower(Set<String> selectedOptions) {
     );
   }
   if (choice == 'quotient') {
-    final secondPower = randomFromInterval(1, firstPower - 1);
+    final secondPower = randomFromInterval(firstPower + 1, 8);
     final total = firstPower - secondPower;
     return Exercise(
-      question: '\\text{Calculer } $base^{$firstPower} \\div $base^{$secondPower}',
-      answer: '$base^{$total} = ${pow(base, total)}',
+      question: '\\text{Calculer } \\frac{$base^{$firstPower}}{$base^{$secondPower}}',
+      answer: '$base^{$total}',
       help: 'Dans un quotient de puissances de même base, soustrais les exposants.',
-      details: '$base^{$firstPower} \\div $base^{$secondPower} = $base^{$total} = ${pow(base, total)}',
+      details: '\\frac{$base^{$firstPower}}{$base^{$secondPower}} = $base^{$firstPower-$secondPower} = $base^{$total}',
     );
   }
   final exponent = randomFromInterval(2, 5);
