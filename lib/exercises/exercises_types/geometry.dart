@@ -10,18 +10,15 @@ const coordinateOptions = <ExerciseOptions>[
 ];
 
 const pythagorasOptions = <ExerciseOptions>[
-  ExerciseOptions(id: 'hypotenuse', label: 'Kavout an hipotenuzenn'),
-  ExerciseOptions(id: 'side', label: 'Kavout un tu all'),
+  ExerciseOptions(id: 'relation', label: 'Skrivañ al liammadur'),
 ];
 
 const thalesOptions = <ExerciseOptions>[
-  ExerciseOptions(id: 'direct', label: 'Kavout un hirder'),
-  ExerciseOptions(id: 'reverse', label: 'Kavout ar c’heñver'),
+  ExerciseOptions(id: 'missingLength', label: 'Kavout un hirder'),
 ];
 
 const trigonometryOptions = <ExerciseOptions>[
-  ExerciseOptions(id: 'angle', label: 'Kavout un ang'),
-  ExerciseOptions(id: 'side', label: 'Kavout un tu'),
+  ExerciseOptions(id: 'formula', label: 'Dibab ur formulenn'),
 ];
 
 String _chooseGeometryOption(Set<String> selectedOptions) {
@@ -36,7 +33,7 @@ Exercise? randomCoordinates(Set<String> selectedOptions) {
   final y = randomFromInterval(-8, 8);
   if (choice == 'read') {
     return IllustratedExercise(
-      question: '\\text{Un point A est à } $x \\text{ sur l’axe horizontal et } $y \\text{ sur l’axe vertical. Donner ses coordonnées.}',
+      question: '\\text{Lire les coordonnées du point A.}',
       answer: 'A($x\\,;\\,$y)',
       help: 'On écrit d’abord l’abscisse, puis l’ordonnée.',
       visual: ExerciseVisual(
@@ -46,121 +43,159 @@ Exercise? randomCoordinates(Set<String> selectedOptions) {
       ),
     );
   }
-  final quadrant = x == 0 || y == 0
-      ? 'sur un axe'
-      : x > 0
-          ? (y > 0 ? 'I' : 'IV')
-          : (y > 0 ? 'II' : 'III');
   return IllustratedExercise(
-    question: '\\text{Placer A}($x\\,;\\,$y) \\text{ dans un repère. Dans quel quadrant se trouve-t-il ?}',
-    answer: quadrant == 'sur un axe' ? '\\text{Sur un axe}' : '\\text{Quadrant } $quadrant',
-    help: 'Le signe de l’abscisse et de l’ordonnée indique le quadrant.',
+    question: '\\text{Placer le point A}($x\\,;\\,$y) \\text{ dans le repère.}',
+    answer: 'A($x\\,;\\,$y)',
+    help: 'Pars de l’origine : avance selon l’abscisse, puis selon l’ordonnée.',
     visual: ExerciseVisual(
       kind: ExerciseVisualKind.coordinates,
       pointX: x,
       pointY: y,
+      showPointBeforeAnswer: false,
     ),
   );
 }
 
 Exercise? randomPythagoras(Set<String> selectedOptions) {
   if (selectedOptions.isEmpty) return null;
-  const triples = <(int, int, int)>[(3, 4, 5), (5, 12, 13), (8, 15, 17)];
-  final triple = triples[randomFromInterval(0, triples.length - 1)];
-  final scale = randomFromInterval(1, 4);
-  final shortSide = triple.$1 * scale;
-  final otherSide = triple.$2 * scale;
-  final hypotenuse = triple.$3 * scale;
-  if (_chooseGeometryOption(selectedOptions) == 'side') {
-    return IllustratedExercise(
-      question: '\\text{Un triangle rectangle a une hypoténuse de } ${hypotenuse}\\,cm \\text{ et un côté de } ${shortSide}\\,cm. \\text{Calculer l’autre côté.}',
-      answer: '${otherSide}\\,cm',
-      help: 'Avec Pythagore : côté² = hypoténuse² − autre côté².',
-      details: '\\text{Autre côté}^2 = $hypotenuse^2 - $shortSide^2 = ${otherSide}^2',
-      visual: ExerciseVisual(
-        kind: ExerciseVisualKind.rightTriangle,
-        labelA: '$shortSide cm',
-        labelB: '? cm',
-        labelC: '$hypotenuse cm',
-      ),
-    );
-  }
-  return IllustratedExercise(
-    question: '\\text{Un triangle rectangle a des côtés de l’angle droit de } ${shortSide}\\,cm \\text{ et } ${otherSide}\\,cm. \\text{Calculer son hypoténuse.}',
-    answer: '${hypotenuse}\\,cm',
-    help: 'Le carré de l’hypoténuse est la somme des carrés des deux autres côtés.',
-    details: 'c^2 = $shortSide^2 + $otherSide^2 = ${hypotenuse}^2',
-    visual: ExerciseVisual(
-      kind: ExerciseVisualKind.rightTriangle,
-      labelA: '$shortSide cm',
-      labelB: '$otherSide cm',
-      labelC: '? cm',
-    ),
+  const vertices = ['A', 'B', 'C'];
+  final rightIndex = randomFromInterval(0, 2);
+  final rightVertex = vertices[rightIndex];
+  final acuteVertices = vertices.toList();
+  acuteVertices.remove(rightVertex);
+  String segment(String first, String second) =>
+      ([first, second]..sort()).join();
+
+  final hypotenuse = segment(acuteVertices[0], acuteVertices[1]);
+  final firstLeg = segment(rightVertex, acuteVertices[0]);
+  final secondLeg = segment(rightVertex, acuteVertices[1]);
+  final target = <String>[hypotenuse, firstLeg, secondLeg][randomFromInterval(0, 2)];
+  final otherLeg = target == firstLeg ? secondLeg : firstLeg;
+  final relation = target == hypotenuse
+      ? '$hypotenuse^2 = $firstLeg^2 + $secondLeg^2'
+      : '$target^2 = $hypotenuse^2 - $otherLeg^2';
+
+  return Exercise(
+    question: '\\text{ABC est rectangle en } $rightVertex. \\text{Quelle relation de Pythagore permet de calculer } $target\\,?',
+    answer: relation,
+    help: 'L’hypoténuse est le côté opposé à l’angle droit. Son carré est égal à la somme des carrés des deux autres côtés.',
+    details: relation,
   );
 }
 
 Exercise? randomThales(Set<String> selectedOptions) {
   if (selectedOptions.isEmpty) return null;
-  final smallLength = randomFromInterval(2, 8);
-  final ratio = randomFromInterval(2, 5);
-  if (_chooseGeometryOption(selectedOptions) == 'reverse') {
-    return IllustratedExercise(
-      question: '\\text{Dans une configuration de Thalès, } AB = $smallLength\\,cm \\text{ et } AC = ${smallLength * ratio}\\,cm. \\text{Calculer } \\frac{AC}{AB}.',
-      answer: '$ratio',
-      help: 'Compare les longueurs correspondantes : AC ÷ AB.',
-      details: '\\frac{AC}{AB} = \\frac{${smallLength * ratio}}{$smallLength} = $ratio',
-      visual: ExerciseVisual(
-        kind: ExerciseVisualKind.thales,
-        labelA: 'AB = $smallLength cm',
-        labelB: 'AC = ${smallLength * ratio} cm',
-      ),
-    );
-  }
-  final largeLength = randomFromInterval(3, 12) * ratio;
+  const sideChoices = [2, 3, 4, 5, 6, 8, 10];
+  const ratios = [0.5, 1.5, 2.0, 2.5, 3.0];
+  final ratio = ratios[randomFromInterval(0, ratios.length - 1)];
+  final ab = sideChoices[randomFromInterval(0, sideChoices.length - 1)].toDouble();
+  final acChoices = sideChoices.where((value) => value != ab).toList();
+  final ac = acChoices[randomFromInterval(0, acChoices.length - 1)].toDouble();
+  final possibleBc = sideChoices
+      .where((value) => value > (ab - ac).abs() && value < ab + ac)
+      .toList();
+  final bc = possibleBc.isEmpty
+      ? (ab + ac) / 2
+      : possibleBc[randomFromInterval(0, possibleBc.length - 1)].toDouble();
+  final lengths = <String, double>{
+    'AB': ab,
+    'AC': ac,
+    'BC': bc,
+    'AD': ab * ratio,
+    'AE': ac * ratio,
+    'DE': bc * ratio,
+  };
+  const segmentNames = ['AB', 'AC', 'BC', 'AD', 'AE', 'DE'];
+  final target = segmentNames[randomFromInterval(0, segmentNames.length - 1)];
+  final labels = <String, String>{
+    for (final name in segmentNames)
+      name: name == target ? '?' : '${_formatLength(lengths[name]!)} cm',
+  };
+  final known = segmentNames.where((name) => name != target).toList();
+  final line1 = known.take(3).map((name) => '$name = ${_formatLength(lengths[name]!)}').join(', ');
+  final line2 = known.skip(3).map((name) => '$name = ${_formatLength(lengths[name]!)}').join(', ');
+  final formula = _thalesDetails(target, lengths);
+
   return IllustratedExercise(
-    question: '\\text{Deux triangles sont en configuration de Thalès. Le rapport de réduction est } \\frac{1}{$ratio} \\text{ et le grand côté mesure } ${largeLength}\\,cm. \\text{Quelle est la longueur correspondante dans le petit triangle ?}',
-    answer: '${largeLength ~/ ratio}\\,cm',
-    help: 'Les longueurs correspondantes sont proportionnelles.',
-    details: '${largeLength} \\times \\frac{1}{$ratio} = ${largeLength ~/ ratio}\\,cm',
+    question: '\\begin{aligned}&\\text{Sur la figure, } (BC) \\parallel (DE).\\\\&\\text{Calculer } $target.\\\\&$line1\\\\&$line2\\end{aligned}',
+    answer: '${_formatLength(lengths[target]!)}\\,cm',
+    help: 'Les côtés correspondants sont proportionnels. Identifie les deux triangles et les rapports égaux.',
+    details: formula,
     visual: ExerciseVisual(
       kind: ExerciseVisualKind.thales,
-      labelA: 'Rapport = 1/$ratio',
-      labelB: 'Grand côté = $largeLength cm',
+      thalesRatio: ratio,
+      thalesButterfly: randomFromInterval(0, 1) == 1,
+      segmentLabels: labels,
     ),
   );
 }
 
 Exercise? randomTrigonometry(Set<String> selectedOptions) {
   if (selectedOptions.isEmpty) return null;
-  if (_chooseGeometryOption(selectedOptions) == 'angle') {
-    const triples = <(double, double, double)>[(3, 4, 5), (5, 12, 13), (8, 15, 17)];
-    final values = triples[randomFromInterval(0, triples.length - 1)];
-    final angle = (asin(values.$1 / values.$3) * 180 / pi).round();
-    return IllustratedExercise(
-      question: '\\text{Dans un triangle rectangle, le côté opposé à l’angle A mesure } ${values.$1}\\,cm \\text{ et l’hypoténuse } ${values.$3}\\,cm. \\text{Calculer A au degré près.}',
-      answer: '${angle}^\\circ',
-      help: '\\sin(A) = \\frac{\\text{côté opposé}}{\\text{hypoténuse}}.',
-      details: '\\sin(A) = \\frac{${values.$1}}{${values.$3}} \\Longrightarrow A \\approx ${angle}^\\circ',
-      visual: ExerciseVisual(
-        kind: ExerciseVisualKind.rightTriangle,
-        labelA: '${values.$1} cm',
-        labelB: '? cm',
-        labelC: '${values.$3} cm',
-      ),
-    );
+  const vertices = ['A', 'B', 'C'];
+  final rightIndex = randomFromInterval(0, 2);
+  final rightVertex = vertices[rightIndex];
+  final acuteVertices = vertices.where((vertex) => vertex != rightVertex).toList();
+  final angleVertex = acuteVertices[randomFromInterval(0, 1)];
+  final otherAcute = acuteVertices.firstWhere((vertex) => vertex != angleVertex);
+  String segment(String first, String second) =>
+      ([first, second]..sort()).join();
+
+  final hypotenuse = segment(acuteVertices[0], acuteVertices[1]);
+  final adjacent = segment(angleVertex, rightVertex);
+  final opposite = segment(otherAcute, rightVertex);
+  final sides = [hypotenuse, adjacent, opposite];
+  final known = sides[randomFromInterval(0, sides.length - 1)];
+  var target = sides[randomFromInterval(0, sides.length - 1)];
+  while (target == known) {
+    target = sides[randomFromInterval(0, sides.length - 1)];
   }
-  final hypotenuse = randomFromInterval(2, 12) * 2;
-  return IllustratedExercise(
-    question: '\\text{Dans un triangle rectangle, A mesure } 30^\\circ \\text{ et l’hypoténuse } ${hypotenuse}\\,cm. \\text{Calculer le côté opposé à A.}',
-    answer: '\\frac{$hypotenuse}{2}\\,cm',
-    help: '\\sin(30^\\circ) = \\frac{1}{2}.',
-    details: '\\text{Côté opposé} = ${hypotenuse} \\times \\sin(30^\\circ) = \\frac{$hypotenuse}{2}\\,cm',
-    visual: ExerciseVisual(
-      kind: ExerciseVisualKind.rightTriangle,
-      labelA: '? cm',
-      labelB: 'cm',
-      labelC: '$hypotenuse cm',
-    ),
+
+  final trig = (known == hypotenuse || target == hypotenuse) &&
+          (known == adjacent || target == adjacent)
+      ? 'cos'
+      : (known == hypotenuse || target == hypotenuse) &&
+              (known == opposite || target == opposite)
+          ? 'sin'
+          : 'tan';
+  final relation = switch (trig) {
+    'cos' => '\\cos(\\widehat{$angleVertex}) = \\frac{$adjacent}{$hypotenuse}',
+    'sin' => '\\sin(\\widehat{$angleVertex}) = \\frac{$opposite}{$hypotenuse}',
+    _ => '\\tan(\\widehat{$angleVertex}) = \\frac{$opposite}{$adjacent}',
+  };
+  final isolated = trig == 'cos'
+      ? target == adjacent
+          ? '$adjacent = $hypotenuse \\times \\cos(\\widehat{$angleVertex})'
+          : '$hypotenuse = \\frac{$adjacent}{\\cos(\\widehat{$angleVertex})}'
+      : trig == 'sin'
+          ? target == opposite
+              ? '$opposite = $hypotenuse \\times \\sin(\\widehat{$angleVertex})'
+              : '$hypotenuse = \\frac{$opposite}{\\sin(\\widehat{$angleVertex})}'
+          : target == opposite
+              ? '$opposite = $adjacent \\times \\tan(\\widehat{$angleVertex})'
+              : '$adjacent = \\frac{$opposite}{\\tan(\\widehat{$angleVertex})}';
+
+  return Exercise(
+    question: '\\begin{aligned}&\\text{ABC est rectangle en } $rightVertex.\\\\&\\text{On connaît } \\widehat{$angleVertex} \\text{ et } $known.\\\\&\\text{On cherche } $target.\\\\&\\text{Quelle formule trigonométrique utiliser ?}\\end{aligned}',
+    answer: '\\begin{aligned}$relation\\\\$isolated\\end{aligned}',
+    help: 'Par rapport à l’angle connu, repère l’hypoténuse, le côté opposé et le côté adjacent.',
+    details: '\\begin{aligned}$relation\\\\$isolated\\end{aligned}',
   );
+}
+
+String _formatLength(num value) =>
+    value.toStringAsFixed(value % 1 == 0 ? 0 : 1).replaceAll('.', ',');
+
+String _thalesDetails(String target, Map<String, double> lengths) {
+  const proportions = '\\frac{AB}{AD} = \\frac{AC}{AE} = \\frac{BC}{DE}';
+  final computed = switch (target) {
+    'AB' => '\\frac{${_formatLength(lengths['AD']!)} \\times ${_formatLength(lengths['AC']!)}}{${_formatLength(lengths['AE']!)}}',
+    'AD' => '\\frac{${_formatLength(lengths['AB']!)} \\times ${_formatLength(lengths['AE']!)}}{${_formatLength(lengths['AC']!)}}',
+    'AC' => '\\frac{${_formatLength(lengths['AE']!)} \\times ${_formatLength(lengths['AB']!)}}{${_formatLength(lengths['AD']!)}}',
+    'AE' => '\\frac{${_formatLength(lengths['AC']!)} \\times ${_formatLength(lengths['AD']!)}}{${_formatLength(lengths['AB']!)}}',
+    'BC' => '\\frac{${_formatLength(lengths['DE']!)} \\times ${_formatLength(lengths['AB']!)}}{${_formatLength(lengths['AD']!)}}',
+    _ => '\\frac{${_formatLength(lengths['BC']!)} \\times ${_formatLength(lengths['AD']!)}}{${_formatLength(lengths['AB']!)}}',
+  };
+  return '$proportions \\quad $target = $computed = ${_formatLength(lengths[target]!)}\\,cm';
 }
 
