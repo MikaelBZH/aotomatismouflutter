@@ -60,6 +60,15 @@ class _ExerciseDiagramPanelState extends State<_ExerciseDiagramPanel> {
   double? selectedNumberValue;
   Offset? selectedCoordinates;
 
+  @override
+  void didUpdateWidget(covariant _ExerciseDiagramPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.visual != widget.visual) {
+      selectedNumberValue = null;
+      selectedCoordinates = null;
+    }
+  }
+
   bool get isPlacementExercise =>
       !widget.visual.showPointBeforeAnswer &&
       (widget.visual.kind == ExerciseVisualKind.coordinates ||
