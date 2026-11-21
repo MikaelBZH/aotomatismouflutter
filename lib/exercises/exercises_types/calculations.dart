@@ -19,7 +19,7 @@ class SumNumbers implements Exercise {
 
   factory SumNumbers.random() {
     final n1 = randomFromInterval(2, 99);
-    final n2 = randomFromInterval(-100, 100);
+    final n2 = randomFromInterval(2, 50);
     return SumNumbers(n1, n2);
   }
   @override
@@ -43,7 +43,7 @@ class SubtractNumbers implements Exercise {
 
   factory SubtractNumbers.random() {
     final n1 = randomFromInterval(2, 99);
-    final n2 = randomFromInterval(-100, 100);
+    final n2 = randomFromInterval(2, 50);
     return SubtractNumbers(n1, n2);
   }
 
@@ -68,7 +68,7 @@ class MultiplyNumbers implements Exercise {
 
   factory MultiplyNumbers.random() {
     final n1 = randomFromInterval(2, 12);
-    final n2 = randomFromInterval(-12, 12);
+    final n2 = randomFromInterval(2, 12);
     return MultiplyNumbers(n1, n2);
   }
 
@@ -93,7 +93,7 @@ class DivideNumbers implements Exercise {
 
   factory DivideNumbers.random() {
     final n1 = randomFromInterval(0, 12);
-    final n2 = randomFromInterval(-12, 12);
+    final n2 = randomFromInterval(0, 12);
     return DivideNumbers(n1, n2);
   }
 
