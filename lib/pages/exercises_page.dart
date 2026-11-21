@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 
 import '../models/exercises.dart';
+import '../models/exercise_visual.dart';
 import '../theme/app_theme.dart';
 import '../widgets/menu.dart';
+import '../widgets/exercise_visual.dart';
 
 class ExercisesPage extends StatefulWidget {
   const ExercisesPage({required this.module, super.key});
@@ -80,6 +82,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
   @override
   Widget build(BuildContext context) {
     final currentExercise = exercise;
+    final visual = currentExercise is IllustratedExercise
+        ? currentExercise.visual
+        : null;
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -191,6 +196,11 @@ class _ExercisesPageState extends State<ExercisesPage> {
                                   icon: const Icon(Icons.help_outline),
                                 ),
                         ),
+                        if (visual != null)
+                          ExerciseVisualPanel(
+                            key: ValueKey(currentExercise?.question),
+                            visual: visual,
+                          ),
                         const SizedBox(height: 16),
                         Wrap(
                           spacing: 10,
