@@ -215,8 +215,7 @@ class DivideFractions implements Exercise {
     final reducedDenominator = calculatedDenominator ~/ factSimplified;
     final reduction = factSimplified == 1
         ? ''
-        : '&= \\frac{$calculatedNumerator \\div $factSimplified}{$calculatedDenominator \\div $factSimplified} \\\\
-    &= \\frac{$reducedNumerator}{$reducedDenominator} \\\\';
+        : '&= \\frac{$calculatedNumerator \\div $factSimplified}{$calculatedDenominator \\div $factSimplified} \\\\ &= \\frac{$reducedNumerator}{$reducedDenominator} \\\\';
     return '''\\begin{aligned}
     $question
     &= \\frac{$n1}{$d1} \\times \\frac{$d2}{$n2} \\\\
