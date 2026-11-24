@@ -79,7 +79,6 @@ Exercise? randomPythagoras(Set<String> selectedOptions) {
     question: '\\text{ABC est rectangle en } $rightVertex. \\text{Quelle relation de Pythagore permet de calculer } $target\\,?',
     answer: relation,
     help: 'L’hypoténuse est le côté opposé à l’angle droit. Son carré est égal à la somme des carrés des deux autres côtés.',
-    details: relation,
   );
 }
 
@@ -179,23 +178,41 @@ Exercise? randomTrigonometry(Set<String> selectedOptions) {
     question: '\\begin{aligned}&\\text{ABC est rectangle en } $rightVertex.\\\\&\\text{On connaît } \\widehat{$angleVertex} \\text{ et } $known.\\\\&\\text{On cherche } $target.\\\\&\\text{Quelle formule trigonométrique utiliser ?}\\end{aligned}',
     answer: '\\begin{aligned}$relation\\\\$isolated\\end{aligned}',
     help: 'Par rapport à l’angle connu, repère l’hypoténuse, le côté opposé et le côté adjacent.',
-    details: '\\begin{aligned}$relation\\\\$isolated\\end{aligned}',
   );
 }
 
 String _formatLength(num value) =>
     value.toStringAsFixed(value % 1 == 0 ? 0 : 1).replaceAll('.', ',');
 
+// Correction en 3 temps, comme sur le site web : le théorème, la proportion
+// avec les valeurs numériques, puis le produit en croix.
 String _thalesDetails(String target, Map<String, double> lengths) {
-  const proportions = '\\frac{AB}{AD} = \\frac{AC}{AE} = \\frac{BC}{DE}';
-  final computed = switch (target) {
-    'AB' => '\\frac{${_formatLength(lengths['AD']!)} \\times ${_formatLength(lengths['AC']!)}}{${_formatLength(lengths['AE']!)}}',
-    'AD' => '\\frac{${_formatLength(lengths['AB']!)} \\times ${_formatLength(lengths['AE']!)}}{${_formatLength(lengths['AC']!)}}',
-    'AC' => '\\frac{${_formatLength(lengths['AE']!)} \\times ${_formatLength(lengths['AB']!)}}{${_formatLength(lengths['AD']!)}}',
-    'AE' => '\\frac{${_formatLength(lengths['AC']!)} \\times ${_formatLength(lengths['AD']!)}}{${_formatLength(lengths['AB']!)}}',
-    'BC' => '\\frac{${_formatLength(lengths['DE']!)} \\times ${_formatLength(lengths['AB']!)}}{${_formatLength(lengths['AD']!)}}',
-    _ => '\\frac{${_formatLength(lengths['BC']!)} \\times ${_formatLength(lengths['AD']!)}}{${_formatLength(lengths['AB']!)}}',
-  };
-  return '$proportions \\quad $target = $computed = ${_formatLength(lengths[target]!)}\\,cm';
+  // Rapports AB/AD, AC/AE et BC/DE sous la forme (numérateur, dénominateur).
+  const ratios = [('AB', 'AD'), ('AC', 'AE'), ('BC', 'DE')];
+  String length(String name) => _formatLength(lengths[name]!);
+  String shown(String name) => name == target ? name : length(name);
+  String fraction((String, String) ratio) =>
+      '\\frac{${shown(ratio.$1)}}{${shown(ratio.$2)}}';
+
+  final hiddenIndex = ratios.indexWhere(
+    (ratio) => ratio.$1 == target || ratio.$2 == target,
+  );
+  final knownIndex = hiddenIndex == 0 ? 1 : 0;
+  final hidden = ratios[hiddenIndex];
+  final known = ratios[knownIndex];
+  final ordered = hiddenIndex < knownIndex ? [hidden, known] : [known, hidden];
+  final numeric = ordered.map(fraction).join(' = ');
+  // x / a = b / c donne x = a × b / c ; a / x = b / c donne x = a × c / b.
+  final computed = target == hidden.$1
+      ? '\\frac{${length(hidden.$2)} \\times ${length(known.$1)}}{${length(known.$2)}}'
+      : '\\frac{${length(hidden.$1)} \\times ${length(known.$2)}}{${length(known.$1)}}';
+
+  return '\\begin{aligned}'
+      '&\\text{Diouzh perzh Thales e c’haller skrivañ :} \\\\ '
+      '&\\frac{AB}{AD} = \\frac{AC}{AE} = \\frac{BC}{DE} \\\\ '
+      '&\\text{Gant an talvoudoù niverel :} \\\\ '
+      '&$numeric \\\\ '
+      '&$target = $computed = ${length(target)}\\,cm'
+      '\\end{aligned}';
 }
 

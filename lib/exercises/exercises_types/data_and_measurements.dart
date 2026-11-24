@@ -51,7 +51,10 @@ Exercise? randomPercentage(Set<String> selectedOptions) {
       question: '\\text{Calculer } $percent\\% \\text{ de } $number',
       answer: _decimal(result),
       help: '$percent % = $multiplierText.',
-      details: '$percent\\% \\text{ de } $number = $number \\times $multiplier = ${_decimal(result)}',
+      // 100 % : la réponse est le nombre lui-même, rien à détailler.
+      details: percent == 100
+          ? null
+          : _percentOfNumberSteps(percent, number, multiplier, _decimal(result)),
     );
   }
 
@@ -65,7 +68,7 @@ Exercise? randomPercentage(Set<String> selectedOptions) {
     question: '\\text{Calculer } $original \\text{ } ${increase ? 'augmenté' : 'diminué'} \\text{ de } $percent\\%.',
     answer: _decimal(result),
     help: 'Utilise le coefficient multiplicateur correspondant à l’augmentation ou à la diminution.',
-    details: '$original \\times (1 ${increase ? '+' : '-'} \\frac{$percent}{100}) = $original \\times ${_decimal(multiplier)} = ${_decimal(result)} \\quad (${increase ? '$original + ${_decimal(change)}' : '$original - ${_decimal(change)}'})',
+    details: _percentChangeSteps(original, percent, increase, multiplier, change, result),
   );
 }
 
@@ -120,7 +123,7 @@ Exercise? randomArea(Set<String> selectedOptions) {
       question: question,
       answer: '${radius * radius}\\pi\\,cm^2',
       help: 'L’aire exacte d’un disque s’écrit pi multiplié par le rayon au carré. Si le diamètre est donné, commence par trouver le rayon.',
-      details: '$radiusDetails \\quad \\mathcal{A} = \\pi \\times $radius^2 = ${radius * radius}\\pi\\,cm^2',
+      details: '$radiusDetails \\quad \\mathcal{A} = \\pi \\times $radius^2 = \\pi \\times ${radius * radius} = ${radius * radius}\\pi\\,cm^2',
     );
   }
   final length = randomFromInterval(2, 12);
@@ -184,7 +187,6 @@ Exercise? randomConversion(Set<String> selectedOptions) {
     question: '\\text{Convertir } $sourceLatex\\,${sourceUnit} \\text{ en } $targetUnit.',
     answer: '$targetLatex\\,${targetUnit}',
     help: help,
-    details: '$sourceLatex\\,${sourceUnit} = $targetLatex\\,${targetUnit}',
     visual: ExerciseVisual(
       kind: ExerciseVisualKind.conversion,
       units: units,
@@ -200,6 +202,42 @@ Exercise? randomConversion(Set<String> selectedOptions) {
       targetUnit: targetUnitText,
     ),
   );
+}
+
+// 25 % → « n × 1/4 = n ÷ 4 », 50 % → « n ÷ 2 » ; 1 % et 10 % : produit direct.
+String _percentOfNumberSteps(
+  int percent,
+  int number,
+  String multiplier,
+  String result,
+) {
+  final divisor = switch (percent) {
+    25 => 4,
+    50 => 2,
+    _ => 0,
+  };
+  final calculation = divisor == 0
+      ? '$number \\times $multiplier = $result'
+      : '$number \\times $multiplier = $number \\div $divisor = $result';
+  return '\\begin{aligned}& $percent\\% = \\frac{$percent}{100} = $multiplier \\\\ & $calculation\\end{aligned}';
+}
+
+// n × (1 ± p/100) = n × coefficient (= n ± n × p/100) = résultat (= n ± variation).
+String _percentChangeSteps(
+  int original,
+  int percent,
+  bool increase,
+  num multiplier,
+  num change,
+  num result,
+) {
+  final sign = increase ? '+' : '-';
+  final rate = _decimal(percent / 100);
+  return '\\begin{aligned}'
+      '& $original \\times \\left(1 $sign \\frac{$percent}{100}\\right) \\\\ '
+      '&= $original \\times ${_decimal(multiplier)} \\left(= $original $sign $original \\times $rate\\right) \\\\ '
+      '&= ${_decimal(result)} \\left(= $original $sign ${_decimal(change)}\\right)'
+      '\\end{aligned}';
 }
 
 String _unitLatex(String unit, String type) => switch (type) {

@@ -14,6 +14,36 @@ String parenthesis(int n) {
   return n < 0 ? '($n)' : '$n';
 }
 
+// ---------------------- ÉTAPES DE CORRECTION ------------------------
+
+// question &= ligne 1 \\ &= ligne 2 ... Chaque ligne commence par « = »
+// (sauf le titre « Simplaat : ») et s'aligne sous le premier « = ».
+String _alignedSteps(String question, List<String> rows) =>
+    '\\begin{aligned}$question &${rows.join(' \\\\ &')}\\end{aligned}';
+
+// Fin de calcul commune : simplification éventuelle, puis réponse finale.
+List<String> _endOfCalculation({
+  required int numerator,
+  required int denominator,
+  required String answer,
+}) {
+  final divisor = gcd(numerator, denominator);
+  final rows = <String>[];
+  var current = '\\frac{$numerator}{$denominator}';
+  if (divisor != 1) {
+    rows
+      ..add('\\text{Simplaat :}')
+      ..add(
+        '=\\frac{$numerator \\color{red}{\\div $divisor}}{$denominator \\color{red}{\\div $divisor}}',
+      );
+    current = '\\frac{${numerator ~/ divisor}}{${denominator ~/ divisor}}';
+    if (numerator % denominator != 0) rows.add('=$current');
+  }
+  if (answer != current) rows.add('= $answer');
+  return rows;
+}
+
+
 // ---------------------- SUM AND SUBTRACT FRACTIONS ------------------------
 
 class SumSubtractFractions implements Exercise {
@@ -67,27 +97,23 @@ class SumSubtractFractions implements Exercise {
   String? get help => 'Evit sammañ pe lemel kevrennoù eo ret dezhe kaout un anver boutin.';
 
   @override
-  String? get details => '''\\begin{aligned}
-    
-    $question &
-    ${d1 != d2
-      ? '=\\frac{$n1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}}{$d1 ${fact1 != 1 ? ' \\color{red}{\\times $fact1}' : ''}} '
-        '${sumSubtract == 0 ? '+' : '-'}'
-        '\\frac{$n2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}}{$d2 ${fact2 != 1 ? ' \\color{red}{\\times $fact2}' : ''}} \\\\'
-        '&=\\frac{${n1 * fact1}}{$commonDenominator} ${sumSubtract == 0 ? '+' : '-'} \\frac{${n2 * fact2}}{$commonDenominator} \\\\'
-      : ''}
-    &=\\frac{${n1 * fact1} ${sumSubtract == 0 ? '+' : '-'} ${parenthesis(n2 * fact2)}}{$commonDenominator} \\\\
-    &=\\frac{$calculatedNumerator}{$commonDenominator} \\\\
-    
-    ${factSimplified != 1 && (calculatedNumerator % calculatedDenominator != 0)
-      ? '\\text{Simplaat :} \\\\'
-        '&=\\frac{$calculatedNumerator \\color{red}{\\div $factSimplified}}{$commonDenominator \\color{red}{\\div $factSimplified}} \\\\'
-        '&=\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}} \\\\'
-      : '\\\\'}
-    
-    ${factSimplified != 1 || calculatedNumerator < 0 ? '&= $answer' : ''}
-      
-    \\end{aligned}''';
+  String? get details {
+    final symbol = sumSubtract == 0 ? '+' : '-';
+    String factor(int value) => value != 1 ? ' \\color{red}{\\times $value}' : '';
+    return _alignedSteps(question, [
+      if (d1 != d2) ...[
+        '=\\frac{$n1${factor(fact1)}}{$d1${factor(fact1)}} $symbol \\frac{$n2${factor(fact2)}}{$d2${factor(fact2)}}',
+        '=\\frac{${n1 * fact1}}{$commonDenominator} $symbol \\frac{${n2 * fact2}}{$commonDenominator}',
+      ],
+      '=\\frac{${n1 * fact1} $symbol ${parenthesis(n2 * fact2)}}{$commonDenominator}',
+      '=\\frac{$calculatedNumerator}{$commonDenominator}',
+      ..._endOfCalculation(
+        numerator: calculatedNumerator,
+        denominator: calculatedDenominator,
+        answer: answer,
+      ),
+    ]);
+  }
 }
 
 // ---------------------- MULTIPLY FRACTIONS ------------------------
@@ -136,20 +162,15 @@ class MultiplyFractions implements Exercise {
   String? get help => 'Liesaat div gevrenn a zo liesaat an daou niverer ha liesaat an daou anver.';
 
   @override
-  String? get details => '''\\begin{aligned}
-    
-    $question &
-    =\\frac{$n1 \\times $n2}{$d1 \\times $d2} \\\\
-    &=\\frac{$calculatedNumerator}{$calculatedDenominator} \\\\
-    ${factSimplified != 1 && (calculatedNumerator % calculatedDenominator != 0)
-      ? '\\text{Simplaat :} \\\\'
-      '&=\\frac{$calculatedNumerator \\color{red}{\\div $factSimplified}}{$calculatedDenominator \\color{red}{\\div $factSimplified}} \\\\'
-      '&=\\frac{${simplifiedFraction[0]}}{${simplifiedFraction[1]}} \\\\'
-      : '\\\\'}
-    
-    ${factSimplified != 1 || calculatedNumerator < 0 ? '&= $answer' : ''}
-      
-    \\end{aligned}''';
+  String? get details => _alignedSteps(question, [
+        '=\\frac{$n1 \\times ${parenthesis(n2)}}{$d1 \\times $d2}',
+        '=\\frac{$calculatedNumerator}{$calculatedDenominator}',
+        ..._endOfCalculation(
+          numerator: calculatedNumerator,
+          denominator: calculatedDenominator,
+          answer: answer,
+        ),
+      ]);
 }
 
 // ---------------------- DIVIDE FRACTIONS ------------------------
@@ -211,18 +232,18 @@ class DivideFractions implements Exercise {
     if (calculatedDenominator == 0) {
       return '$question = \\text{Dibosupl}';
     }
-    final reducedNumerator = calculatedNumerator ~/ factSimplified;
-    final reducedDenominator = calculatedDenominator ~/ factSimplified;
-    final reduction = factSimplified == 1
-        ? ''
-        : '&= \\frac{$calculatedNumerator \\div $factSimplified}{$calculatedDenominator \\div $factSimplified} \\\\ &= \\frac{$reducedNumerator}{$reducedDenominator} \\\\';
-    return '''\\begin{aligned}
-    $question
-    &= \\frac{$n1}{$d1} \\times \\frac{$d2}{$n2} \\\\
-    &= \\frac{$rawNumerator}{$rawDenominator} \\\\
-    $reduction
-    &= $answer
-    \\end{aligned}''';
+    return _alignedSteps(question, [
+      '=\\frac{$n1}{$d1} \\times \\frac{$d2}{$n2}',
+      '=\\frac{$n1 \\times $d2}{$d1 \\times ${parenthesis(n2)}}',
+      '=\\frac{$rawNumerator}{$rawDenominator}',
+      if (rawDenominator < 0)
+        '=\\frac{$calculatedNumerator}{$calculatedDenominator}',
+      ..._endOfCalculation(
+        numerator: calculatedNumerator,
+        denominator: calculatedDenominator,
+        answer: answer,
+      ),
+    ]);
   }
 }
 
