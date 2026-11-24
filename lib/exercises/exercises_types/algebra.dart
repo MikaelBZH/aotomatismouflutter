@@ -5,7 +5,7 @@ import '../../models/exercises.dart';
 import '../../models/exercise_visual.dart';
 
 const numberLineOptions = <ExerciseOptions>[
-  ExerciseOptions(id: 'read', label: 'Lenn ar poent'),
+  ExerciseOptions(id: 'read', label: 'Lenn absisenn ur poent'),
   ExerciseOptions(id: 'place', label: 'Daveañ ur poent'),
 ];
 
@@ -77,10 +77,9 @@ Exercise? randomNumberLine(Set<String> selectedOptions) {
 
   if (choice == 'read') {
     return IllustratedExercise(
-      question: '\\text{Quelle est l’abscisse du point A ?}',
-      answer: valueLatex,
+      question: '\\text{Lenn absisenn ar poent A ?}',
+      answer: 'A($valueLatex)',
       help: 'Repère les graduations entières et compte les subdivisions jusqu’au point.',
-      details: 'A = $valueLatex',
       visual: visual,
     );
   }
