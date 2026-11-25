@@ -53,7 +53,7 @@ abstract final class AppTheme {
         ),
         headlineMedium: TextStyle(
           color: AppColors.ink,
-          fontSize: 30,
+          fontSize: 20,
           fontWeight: FontWeight.w900,
           height: 1.12,
         ),

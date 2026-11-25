@@ -131,14 +131,7 @@ class _ExercisesPageState extends State<ExercisesPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          'OBERIADENNOÙ',
-                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                color: AppColors.teal,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1.6,
-                              ),
-                        ),
+
                         const SizedBox(height: 8),
                         Text(
                           widget.module.title,

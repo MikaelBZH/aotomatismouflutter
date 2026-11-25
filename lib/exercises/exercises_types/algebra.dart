@@ -77,7 +77,7 @@ Exercise? randomNumberLine(Set<String> selectedOptions) {
 
   if (choice == 'read') {
     return IllustratedExercise(
-      question: '\\text{Quelle est l’abscisse du point A ?}',
+      question: '\\text{Peseurt absisenn zo d\'ar poent A ?}',
       answer: valueLatex,
       help: 'Repère les graduations entières et compte les subdivisions jusqu’au point.',
       visual: visual,
